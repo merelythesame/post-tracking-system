@@ -1,6 +1,3 @@
 <?php
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    header('Content-Type: application/json');
-    echo "Hello World!";
-}
+require_once 'routes/api.php';
