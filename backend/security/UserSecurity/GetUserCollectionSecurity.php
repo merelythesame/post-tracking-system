@@ -1,15 +1,13 @@
 <?php
 
-namespace routes\UserStrategies;
+namespace security\UserSecurity;
 
 use config\Security;
-use controllers\UserController;
 use models\User;
-use routes\RouterStrategyInterface;
+use security\SecurityDecorator;
 
-class GetUsersStrategy implements RouterStrategyInterface
+class GetUserCollectionSecurity extends SecurityDecorator
 {
-
     public function handle(array $params = []): void
     {
         $currentUser = Security::getUser();
@@ -26,7 +24,7 @@ class GetUsersStrategy implements RouterStrategyInterface
             return;
         }
 
-        $controller = new UserController();
-        $controller->getUsers();
+        parent::handle($params);
     }
+
 }
