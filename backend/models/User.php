@@ -4,121 +4,101 @@ namespace models;
 
 require_once __DIR__ . '/../autoload.php';
 use config\Database;
+use JsonSerializable;
 use PDO;
 
-class User
+class User implements JsonSerializable
 {
     const string ROLE_ADMIN = 'ROLE_ADMIN';
     const string ROLE_USER = 'ROLE_USER';
-    public int $id;
-    public string $name;
-    public string $email;
-    public string $phoneNumber;
-    public string $password;
-    public string $role;
 
-    public static function all(): array
+    private ?int $id = null;
+    private ?string $name = null;
+    private ?string $surname = null;
+    private ?string $email = null;
+    private ?string $phoneNumber = null;
+    private ?string $password = null;
+    private ?string $role = null;
+
+    public function getId(): ?int
     {
-        $pdo = Database::getInstance();
-        $stmt = $pdo->query("SELECT * FROM users");
-
-        $users = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $user = new User();
-            $user->id = $row['id'];
-            $user->name = $row['name'];
-            $user->email = $row['email'];
-            $user->password = $row['password'];
-            $user->phoneNumber = $row['phone_number'];
-            $user->role = $row['role'];
-
-            $users[] = $user;
-        }
-
-        return $users;
+        return $this->id;
     }
 
-    public static function findByEmail(string $email): ?User
+    public function setId(?int $id): void
     {
-        $pdo = Database::getInstance();
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-        $stmt->execute(['email' => $email]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($row) {
-            $user = new User();
-            $user->id = $row['id'];
-            $user->email = $row['email'];
-            $user->password = $row['password'];
-            $user->role = $row['role'];
-
-            return $user;
-        }
-        return null;
+        $this->id = $id;
     }
 
-    public static function find(int $id): ?User
+    public function getName(): ?string
     {
-        $pdo = Database::getInstance();
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-        $stmt->execute([$id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($row) {
-            $user = new User();
-            $user->id = $row['id'];
-            $user->name = $row['name'];
-            $user->email = $row['email'];
-            $user->password = $row['password'];
-            $user->phoneNumber = $row['phone_number'];
-            $user->role = $row['role'];
-
-            return $user;
-        }
-
-        return null;
+        return $this->name;
     }
 
-    public function save(): bool
+    public function setName(?string $name): void
     {
-        $pdo = Database::getInstance();
-        $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("INSERT INTO users (name, email, password, phone_number, role) VALUES (?, ?, ?, ?, ?)");
-        return $stmt->execute([$this->name, $this->email, $hashedPassword, $this->phoneNumber, User::ROLE_USER]);
+        $this->name = $name;
     }
 
-    public function update(array $fields): bool
+    public function getSurname(): ?string
     {
-        $pdo = Database::getInstance();
-
-        $setClauses = [];
-        $values = [];
-
-        foreach ($fields as $key => $value) {
-            if (property_exists($this, $key)) {
-                $setClauses[] = "$key = ?";
-                $values[] = $value;
-            }
-        }
-
-        if (empty($setClauses)) {
-            return false;
-        }
-
-        $values[] = $this->id;
-
-        $sql = "UPDATE users SET " . implode(', ', $setClauses) . " WHERE id = ?";
-        $stmt = $pdo->prepare($sql);
-
-        return $stmt->execute($values);
+        return $this->surname;
     }
 
-
-    public function delete(): bool
+    public function setSurname(?string $surname): void
     {
-        $pdo = Database::getInstance();
-        $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
-        return $stmt->execute([$this->id]);
+        $this->surname = $surname;
     }
 
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): void
+    {
+        $this->email = $email;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): void
+    {
+        $this->phoneNumber = $phoneNumber;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): void
+    {
+        $this->password = $password;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(?string $role): void
+    {
+        $this->role = $role;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'surname' => $this->getSurname(),
+            'email' => $this->getEmail(),
+            'phoneNumber' => $this->getPhoneNumber(),
+            'role' => $this->getRole(),
+        ];
+    }
 }

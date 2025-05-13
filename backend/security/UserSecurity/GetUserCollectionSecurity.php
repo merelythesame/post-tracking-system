@@ -18,7 +18,7 @@ class GetUserCollectionSecurity extends SecurityDecorator
             return;
         }
 
-        if($currentUser->role == User::ROLE_USER){
+        if($currentUser->getRole() == User::ROLE_USER){
             http_response_code(403);
             echo json_encode(['message' => 'Forbidden - you do not have access.']);
             return;

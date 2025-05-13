@@ -18,7 +18,7 @@ class DeleteUserSecurity extends SecurityDecorator
             return;
         }
 
-        if(($currentUser->role === User::ROLE_USER and $currentUser->id == $params[0]) or $currentUser->role === User::ROLE_ADMIN){
+        if(($currentUser->getRole() === User::ROLE_USER and $currentUser->getId() == $params[0]) or $currentUser->getRole() === User::ROLE_ADMIN){
             parent::handle($params);
             return;
         }
