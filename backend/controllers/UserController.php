@@ -1,6 +1,7 @@
 <?php
 
 namespace controllers;
+use config\Security;
 use models\User;
 
 require_once __DIR__ . '/../autoload.php';
@@ -70,6 +71,36 @@ class UserController
 
         http_response_code(202);
         echo json_encode(['message' => 'User deleted']);
+    }
+
+    public function login(): void
+    {
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        $user = User::findByEmail($data['email']);
+
+        if (!$data || !is_array($data)) {
+            http_response_code(400);
+            echo json_encode(['message' => 'Invalid input']);
+            return;
+        }
+
+        if (!$user) {
+            http_response_code(404);
+            echo json_encode(['message' => 'User not found']);
+            return;
+        }
+
+        if(!password_verify($data['password'], $user->password)) {
+            http_response_code(404);
+            echo json_encode(['message' => 'Invalid credentials']);
+            return;
+        }
+
+        Security::setUser($user);
+
+        http_response_code(200);
+        echo json_encode(['message' => 'Successfully logged in']);
     }
 
 }
