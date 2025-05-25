@@ -1,12 +1,21 @@
 <?php
 
 use routes\Router;
+use routes\ShipmentStrategies\AddShipmentStrategy;
+use routes\ShipmentStrategies\DeleteShipmentStrategy;
+use routes\ShipmentStrategies\GetShipmentCollectingStrategy;
+use routes\ShipmentStrategies\GetShipmentStrategy;
+use routes\ShipmentStrategies\UpdateShipmentStrategy;
 use routes\UserStrategies\AddUserStrategy;
 use routes\UserStrategies\DeleteUserStrategy;
 use routes\UserStrategies\GetUserCollectionStrategy;
 use routes\UserStrategies\GetUserStrategy;
 use routes\UserStrategies\LogInUserStrategy;
 use routes\UserStrategies\UpdateUserStrategy;
+use security\ShipmentSecurity\DeleteShipmentSecurity;
+use security\ShipmentSecurity\GetShipmentCollectionSecurity;
+use security\ShipmentSecurity\GetShipmentSecurity;
+use security\ShipmentSecurity\UpdateShipmentSecurity;
 use security\UserSecurity\DeleteUserSecurity;
 use security\UserSecurity\GetUserCollectionSecurity;
 use security\UserSecurity\GetUserSecurity;
@@ -24,6 +33,12 @@ $router->register('POST', '#^/users$#', new AddUserStrategy());
 $router->register('POST', '#^/login$#', new LoginUserStrategy());
 $router->register('PATCH', '#^/users/(\d+)$#', new UpdateUserSecurity(new UpdateUserStrategy()));
 $router->register('DELETE', '#^/users/(\d+)$#', new DeleteUserSecurity(new DeleteUserStrategy()));
+
+$router->register('GET', '#^/shipments$#', new GetShipmentCollectionSecurity(new GetShipmentCollectingStrategy()));
+$router->register('GET', '#^/shipments/(\d+)$#', new GetShipmentSecurity(new GetShipmentStrategy()));
+$router->register('POST', '#^/shipments#', new AddShipmentStrategy());
+$router->register('PATCH', '#^/shipments/(\d+)$#', new UpdateShipmentSecurity(new UpdateShipmentStrategy()));
+$router->register('DELETE', '#^/shipments/(\d+)$#', new DeleteShipmentSecurity(new DeleteShipmentStrategy()));
 
 $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
 $method = $_SERVER['REQUEST_METHOD'];
