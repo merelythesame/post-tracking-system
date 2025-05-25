@@ -33,8 +33,8 @@ class TrackingStatusRepository
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
-            INSERT INTO tracking_status (shipment_id, status, location, send_at, arrive_at)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO tracking_status (shipment_id, status, location, send_at, arrive_at, post_office_id)
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
         return $stmt->execute([
             $trackingStatus->getShipmentId(),
@@ -42,6 +42,7 @@ class TrackingStatusRepository
             $trackingStatus->getLocation(),
             $trackingStatus->getSendAt(),
             $trackingStatus->getArriveAt(),
+            $trackingStatus->getPostOfficeId()
         ]);
     }
 
@@ -82,6 +83,7 @@ class TrackingStatusRepository
         $trackingStatus->setLocation($row['location']);
         $trackingStatus->setSendAt($row['send_at']);
         $trackingStatus->setArriveAt($row['arrive_at']);
+        $trackingStatus->setPostOfficeId($row['post_office_id']);
 
         return $trackingStatus;
     }

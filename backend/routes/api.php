@@ -1,5 +1,10 @@
 <?php
 
+use routes\PostOfficeStrategies\AddPostOfficeStrategy;
+use routes\PostOfficeStrategies\DeletePostOfficeStrategy;
+use routes\PostOfficeStrategies\GetCollectionPostOfficeStrategy;
+use routes\PostOfficeStrategies\GetPostOfficeStrategy;
+use routes\PostOfficeStrategies\UpdatePostOfficeStrategy;
 use routes\Router;
 use routes\ShipmentStrategies\AddShipmentStrategy;
 use routes\ShipmentStrategies\DeleteShipmentStrategy;
@@ -17,6 +22,7 @@ use routes\UserStrategies\GetUserCollectionStrategy;
 use routes\UserStrategies\GetUserStrategy;
 use routes\UserStrategies\LogInUserStrategy;
 use routes\UserStrategies\UpdateUserStrategy;
+use security\PostOfficeSecurity\AlterPostOfficeSecurity;
 use security\ShipmentSecurity\DeleteShipmentSecurity;
 use security\ShipmentSecurity\GetShipmentCollectionSecurity;
 use security\ShipmentSecurity\GetShipmentSecurity;
@@ -54,6 +60,12 @@ $router->register('GET', '#^/tracking-status/(\d+)$#', new GetTrackingStatusSecu
 $router->register('POST', '#^/tracking-status#', new AddTrackingStatusStrategy());
 $router->register('PATCH', '#^/tracking-status/(\d+)$#', new UpdateTrackingStatusSecurity(new UpdateTrackingStatusStrategy()));
 $router->register('DELETE', '#^/tracking-status/(\d+)$#', new DeleteTrackingStatusSecurity(new DeleteTrackingStatusStrategy()));
+
+$router->register('GET', '#^/post-office$#', new GetCollectionPostOfficeStrategy());
+$router->register('GET', '#^/post-office/(\d+)$#', new GetPostOfficeStrategy());
+$router->register('POST', '#^/post-office#', new AlterPostOfficeSecurity(new AddPostOfficeStrategy()));
+$router->register('PATCH', '#^/post-office/(\d+)$#', new AlterPostOfficeSecurity(new UpdatePostOfficeStrategy()));
+$router->register('DELETE', '#^/post-office/(\d+)$#', new AlterPostOfficeSecurity(new DeletePostOfficeStrategy()));
 
 $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
 $method = $_SERVER['REQUEST_METHOD'];
