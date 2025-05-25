@@ -12,6 +12,7 @@ class TrackingStatus implements JsonSerializable
     private ?string $location = null;
     private ?string $sendAt = null;
     private ?string $arriveAt = null;
+    private ?int $post_office_id = null;
 
     public function getId(): ?int
     {
@@ -73,6 +74,16 @@ class TrackingStatus implements JsonSerializable
         $this->arriveAt = $arriveAt;
     }
 
+    public function getPostOfficeId(): ?int
+    {
+        return $this->post_office_id;
+    }
+
+    public function setPostOfficeId(?int $post_office_id): void
+    {
+        $this->post_office_id = $post_office_id;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -81,7 +92,9 @@ class TrackingStatus implements JsonSerializable
             'status' => $this->getStatus(),
             'location' => $this->getLocation(),
             'sendAt' => $this->getSendAt(),
-            'arriveAt' => $this->getSendAt()
+            'arriveAt' => $this->getSendAt(),
+            'post_office_id' => $this->getPostOfficeId(),
         ];
     }
+
 }

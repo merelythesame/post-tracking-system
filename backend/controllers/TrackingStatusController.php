@@ -46,6 +46,7 @@ class TrackingStatusController
         $trackingStatus->setShipmentId($data['shipmentId']);
         $trackingStatus->setStatus($data['status']);
         $trackingStatus->setLocation($data['location']);
+        $trackingStatus->setPostOfficeId($data['postOfficeId']);
 
         if(in_array('sendAt', $data)){
             $trackingStatus->setSendAt($data['sendAt']);
