@@ -6,7 +6,7 @@ use config\Database;
 use models\User;
 use PDO;
 
-class UserRepository
+class UserRepository implements RepositoryInterface
 {
     public function all(): array
     {
@@ -38,25 +38,25 @@ class UserRepository
         return $row ? $this->hydrateUser($row) : null;
     }
 
-    public function save(User $user): bool
+    public function save(object $entity): bool
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
             INSERT INTO users (name, surname, email, password, phone_number, role)
             VALUES (?, ? ,?, ?, ?, ?)
         ");
-        $hashedPassword = password_hash($user->getPassword(), PASSWORD_DEFAULT);
+        $hashedPassword = password_hash($entity->getPassword(), PASSWORD_DEFAULT);
         return $stmt->execute([
-            $user->getName(),
-            $user->getSurname(),
-            $user->getEmail(),
+            $entity->getName(),
+            $entity->getSurname(),
+            $entity->getEmail(),
             $hashedPassword,
-            $user->getPhoneNumber(),
-            $user->getRole() ?? User::ROLE_USER,
+            $entity->getPhoneNumber(),
+            $entity->getRole() ?? User::ROLE_USER,
         ]);
     }
 
-    public function update(User $user, array $fields): bool
+    public function update(object $entity, array $fields): bool
     {
         $pdo = Database::getInstance();
 
@@ -70,18 +70,18 @@ class UserRepository
 
         if (empty($setClauses)) return false;
 
-        $values[] = $user->getId();
+        $values[] = $entity->getId();
 
         $sql = "UPDATE users SET " . implode(', ', $setClauses) . " WHERE id = ?";
         $stmt = $pdo->prepare($sql);
         return $stmt->execute($values);
     }
 
-    public function delete(User $user): bool
+    public function delete(object $entity): bool
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
-        return $stmt->execute([$user->getId()]);
+        return $stmt->execute([$entity->getId()]);
     }
 
     private function hydrateUser(array $row): User

@@ -6,7 +6,7 @@ use config\Database;
 use models\PostOffice;
 use PDO;
 
-class PostOfficeRepository
+class PostOfficeRepository implements RepositoryInterface
 {
     public function all(): array
     {
@@ -30,7 +30,7 @@ class PostOfficeRepository
         return $row ? $this->hydratePostOffice($row) : null;
     }
 
-    public function save(PostOffice $office): bool
+    public function save(object $entity): bool
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
@@ -38,14 +38,14 @@ class PostOfficeRepository
             VALUES (?, ?, ?, ?)
         ");
         return $stmt->execute([
-            $office->getName(),
-            $office->getAddress(),
-            $office->getCity(),
-            $office->getPostalCode(),
+            $entity->getName(),
+            $entity->getAddress(),
+            $entity->getCity(),
+            $entity->getPostalCode(),
         ]);
     }
 
-    public function update(PostOffice $office, array $fields): bool
+    public function update(object $entity, array $fields): bool
     {
         $pdo = Database::getInstance();
 
@@ -59,18 +59,18 @@ class PostOfficeRepository
 
         if (empty($setClauses)) return false;
 
-        $values[] = $office->getId();
+        $values[] = $entity->getId();
         $sql = "UPDATE post_offices SET " . implode(', ', $setClauses) . " WHERE id = ?";
         $stmt = $pdo->prepare($sql);
 
         return $stmt->execute($values);
     }
 
-    public function delete(PostOffice $office): bool
+    public function delete(object $entity): bool
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("DELETE FROM post_offices WHERE id = ?");
-        return $stmt->execute([$office->getId()]);
+        return $stmt->execute([$entity->getId()]);
     }
 
     private function hydratePostOffice(array $row): PostOffice

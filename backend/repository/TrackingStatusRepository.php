@@ -6,7 +6,7 @@ use config\Database;
 use models\TrackingStatus;
 use PDO;
 
-class TrackingStatusRepository
+class TrackingStatusRepository implements RepositoryInterface
 {
     public function all(): array
     {
@@ -29,7 +29,7 @@ class TrackingStatusRepository
         return $row ? $this->hydrateTrackingStatus($row) : null;
     }
 
-    public function save(TrackingStatus $trackingStatus): bool
+    public function save(object $entity): bool
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
@@ -37,16 +37,16 @@ class TrackingStatusRepository
             VALUES (?, ?, ?, ?, ?, ?)
         ");
         return $stmt->execute([
-            $trackingStatus->getShipmentId(),
-            $trackingStatus->getStatus(),
-            $trackingStatus->getLocation(),
-            $trackingStatus->getSendAt(),
-            $trackingStatus->getArriveAt(),
-            $trackingStatus->getPostOfficeId()
+            $entity->getShipmentId(),
+            $entity->getStatus(),
+            $entity->getLocation(),
+            $entity->getSendAt(),
+            $entity->getArriveAt(),
+            $entity->getPostOfficeId()
         ]);
     }
 
-    public function update(TrackingStatus $trackingStatus, array $fields): bool
+    public function update(object $entity, array $fields): bool
     {
         $pdo = Database::getInstance();
 
@@ -60,18 +60,18 @@ class TrackingStatusRepository
 
         if (empty($setClauses)) return false;
 
-        $values[] = $trackingStatus->getId();
+        $values[] = $entity->getId();
 
         $sql = "UPDATE tracking_status SET " . implode(', ', $setClauses) . " WHERE id = ?";
         $stmt = $pdo->prepare($sql);
         return $stmt->execute($values);
     }
 
-    public function delete(TrackingStatus $trackingStatus): bool
+    public function delete(object $entity): bool
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("DELETE FROM tracking_status WHERE id = ?");
-        return $stmt->execute([$trackingStatus->getId()]);
+        return $stmt->execute([$entity->getId()]);
     }
 
     private function hydrateTrackingStatus(array $row): TrackingStatus
