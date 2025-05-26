@@ -5,16 +5,14 @@ namespace controllers;
 use models\SupportTicket;
 use repository\SupportTicketRepository;
 
-class SupportTicketController
+class SupportTicketController extends AbstractController implements HasUserEntitiesInterface
 {
-    private SupportTicketRepository $repository;
-
     public function __construct()
     {
-        $this->repository = new SupportTicketRepository();
+        parent::__construct(new SupportTicketRepository());
     }
 
-    public function getTickets(): void
+    public function getAllEntities(): void
     {
         $data = [];
         $tickets = $this->repository->all();
@@ -27,7 +25,7 @@ class SupportTicketController
         echo json_encode($data);
     }
 
-    public function getTicketById(int $id): void
+    public function getEntityById(int $id): void
     {
         $ticket = $this->repository->find($id);
 
@@ -41,10 +39,10 @@ class SupportTicketController
         echo json_encode($ticket->jsonSerialize());
     }
 
-    public function getTicketByUser(int $userId): void
+    public function getEntityByUser(int $id): void
     {
         $data = [];
-        $tickets = $this->repository->findByUserId($userId);
+        $tickets = $this->repository->findByUserId($id);
 
         header('Content-Type: application/json');
         foreach ($tickets as $ticket) {
@@ -54,7 +52,7 @@ class SupportTicketController
         echo json_encode($data);
     }
 
-    public function addTicket(): void
+    public function addEntity(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $ticket = new SupportTicket();
@@ -65,11 +63,12 @@ class SupportTicketController
         $ticket->setCreatedAt(time());
 
         $this->repository->save($ticket);
+        header('Content-Type: application/json');
         http_response_code(201);
         echo json_encode(['message' => 'Support ticket created']);
     }
 
-    public function updateTicket(int $id): void
+    public function updateEntity(int $id): void
     {
         $ticket = $this->repository->find($id);
 
@@ -82,11 +81,12 @@ class SupportTicketController
         $data = json_decode(file_get_contents('php://input'), true);
         $success = $this->repository->update($ticket, $data);
 
+        header('Content-Type: application/json');
         http_response_code($success ? 200 : 400);
         echo json_encode(['message' => $success ? 'Ticket updated' : 'Update failed']);
     }
 
-    public function deleteTicket(int $id): void
+    public function deleteEntity(int $id): void
     {
         $ticket = $this->repository->find($id);
 
@@ -97,6 +97,7 @@ class SupportTicketController
         }
 
         $this->repository->delete($ticket);
+        header('Content-Type: application/json');
         http_response_code(202);
         echo json_encode(['message' => 'Ticket deleted']);
     }

@@ -5,16 +5,14 @@ namespace controllers;
 use models\Shipment;
 use repository\ShipmentRepository;
 
-class ShipmentController
+class ShipmentController extends AbstractController implements HasUserEntitiesInterface
 {
-    private ShipmentRepository $repository;
-
     public function __construct()
     {
-        $this->repository = new ShipmentRepository();
+        parent::__construct(new ShipmentRepository());
     }
 
-    public function getShipments(): void
+    public function getAllEntities(): void
     {
         $data = [];
         $shipments = $this->repository->all();
@@ -26,7 +24,7 @@ class ShipmentController
         echo json_encode($data);
     }
 
-    public function getShipmentsByUser(int $id): void
+    public function getEntityByUser(int $id): void
     {
         $data = [];
         $shipments = $this->repository->findByUserId($id);
@@ -38,7 +36,7 @@ class ShipmentController
         echo json_encode($data);
     }
 
-    public function getShipmentById(int $id): void
+    public function getEntityById(int $id): void
     {
         $shipment = $this->repository->find($id);
         if (!$shipment) {
@@ -51,7 +49,7 @@ class ShipmentController
         echo json_encode($shipment->jsonSerialize());
     }
 
-    public function addShipment(): void
+    public function addEntity(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $shipment = new Shipment();
@@ -64,11 +62,12 @@ class ShipmentController
         $shipment->setCreatedAt(time());
 
         $this->repository->save($shipment);
+        header('Content-Type: application/json');
         http_response_code(201);
         echo json_encode(['message' => 'Shipment created']);
     }
 
-    public function updateShipment(int $id): void
+    public function updateEntity(int $id): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $shipment = $this->repository->find($id);
@@ -80,11 +79,12 @@ class ShipmentController
         }
 
         $success = $this->repository->update($shipment, $data);
+        header('Content-Type: application/json');
         http_response_code($success ? 200 : 400);
         echo json_encode(['message' => $success ? 'Shipment updated' : 'Update failed']);
     }
 
-    public function deleteShipment(int $id): void
+    public function deleteEntity(int $id): void
     {
         $shipment = $this->repository->find($id);
 
@@ -95,6 +95,7 @@ class ShipmentController
         }
 
         $this->repository->delete($shipment);
+        header('Content-Type: application/json');
         http_response_code(202);
         echo json_encode(['message' => 'Shipment deleted']);
     }

@@ -5,18 +5,14 @@ use config\Security;
 use models\User;
 use repository\UserRepository;
 
-require_once __DIR__ . '/../autoload.php';
-
-class UserController
+class UserController extends AbstractController
 {
-    private UserRepository $repository;
-
     public function __construct()
     {
-        $this->repository = new UserRepository();
+        parent::__construct(new UserRepository());
     }
 
-    public function getUsers(): void
+    public function getAllEntities(): void
     {
         $data = [];
         $users = $this->repository->all();
@@ -28,7 +24,7 @@ class UserController
         echo json_encode($data);
     }
 
-    public function getUserById(int $id): void
+    public function getEntityById(int $id): void
     {
         $user = $this->repository->find($id);
         if (!$user) {
@@ -41,7 +37,7 @@ class UserController
         echo json_encode($user->jsonSerialize());
     }
 
-    public function addUser(): void
+    public function addEntity(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $user = new User();
@@ -52,11 +48,12 @@ class UserController
         $user->setPhoneNumber($data['phoneNumber']);
 
         $this->repository->save($user);
+        header('Content-Type: application/json');
         http_response_code(201);
         echo json_encode(['message' => 'User created']);
     }
 
-    public function updateUser(int $id): void
+    public function updateEntity(int $id): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $user = $this->repository->find($id);
@@ -68,11 +65,12 @@ class UserController
         }
 
         $success = $this->repository->update($user, $data);
+        header('Content-Type: application/json');
         http_response_code($success ? 200 : 400);
         echo json_encode(['message' => $success ? 'User updated' : 'Update failed']);
     }
 
-    public function deleteUser(int $id): void
+    public function deleteEntity(int $id): void
     {
         $user = $this->repository->find($id);
 
@@ -83,6 +81,7 @@ class UserController
         }
 
         $this->repository->delete($user);
+        header('Content-Type: application/json');
         http_response_code(202);
         echo json_encode(['message' => 'User deleted']);
     }
@@ -104,8 +103,16 @@ class UserController
         }
 
         Security::setUser($user);
+        header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode(['message' => 'Successfully logged in']);
+    }
+
+    public function logout(): void
+    {
+        Security::logout();
+        header('Content-Type: application/json');
+        echo json_encode(['message' => 'Logged out successfully.']);
     }
 
 }

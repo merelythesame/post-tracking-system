@@ -5,16 +5,14 @@ namespace controllers;
 use models\PostOffice;
 use repository\PostOfficeRepository;
 
-class PostOfficeController
+class PostOfficeController extends AbstractController
 {
-    private PostOfficeRepository $repository;
-
     public function __construct()
     {
-        $this->repository = new PostOfficeRepository();
+        parent::__construct(new PostOfficeRepository());
     }
 
-    public function getPostOffices(): void
+    public function getAllEntities(): void
     {
         $data = [];
         $offices = $this->repository->all();
@@ -27,7 +25,7 @@ class PostOfficeController
         echo json_encode($data);
     }
 
-    public function getPostOfficeById(int $id): void
+    public function getEntityById(int $id): void
     {
         $office = $this->repository->find($id);
         if (!$office) {
@@ -40,7 +38,7 @@ class PostOfficeController
         echo json_encode($office->jsonSerialize());
     }
 
-    public function addOffice(): void
+    public function addEntity(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $office = new PostOffice();
@@ -50,11 +48,12 @@ class PostOfficeController
         $office->setPostalCode($data['postalCode']);
 
         $this->repository->save($office);
+        header('Content-Type: application/json');
         http_response_code(201);
         echo json_encode(['message' => 'Post office created']);
     }
 
-    public function updateOffice(int $id): void
+    public function updateEntity(int $id): void
     {
         $office = $this->repository->find($id);
         if (!$office) {
@@ -65,11 +64,12 @@ class PostOfficeController
 
         $data = json_decode(file_get_contents('php://input'), true);
         $success = $this->repository->update($office, $data);
+        header('Content-Type: application/json');
         http_response_code($success ? 200 : 400);
         echo json_encode(['message' => $success ? 'Post office updated' : 'Update failed']);
     }
 
-    public function deleteOffice(int $id): void
+    public function deleteEntity(int $id): void
     {
         $office = $this->repository->find($id);
         if (!$office) {
@@ -79,6 +79,7 @@ class PostOfficeController
         }
 
         $this->repository->delete($office);
+        header('Content-Type: application/json');
         http_response_code(202);
         echo json_encode(['message' => 'Post office deleted']);
     }
