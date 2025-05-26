@@ -1,49 +1,28 @@
 <?php
 
-use routes\PostOfficeStrategies\AddPostOfficeStrategy;
-use routes\PostOfficeStrategies\DeletePostOfficeStrategy;
-use routes\PostOfficeStrategies\GetCollectionPostOfficeStrategy;
-use routes\PostOfficeStrategies\GetPostOfficeStrategy;
-use routes\PostOfficeStrategies\UpdatePostOfficeStrategy;
+use controllers\PostOfficeController;
+use controllers\ShipmentController;
+use controllers\SupportTicketController;
+use controllers\TrackingStatusController;
+use controllers\UserController;
 use routes\Router;
-use routes\ShipmentStrategies\AddShipmentStrategy;
-use routes\ShipmentStrategies\DeleteShipmentStrategy;
-use routes\ShipmentStrategies\GetShipmentCollectingStrategy;
-use routes\ShipmentStrategies\GetShipmentStrategy;
-use routes\ShipmentStrategies\UpdateShipmentStrategy;
-use routes\SupportTicketStrategies\AddSupportTicketStrategy;
-use routes\SupportTicketStrategies\DeleteSupportTicketStrategy;
-use routes\SupportTicketStrategies\GetCollectionSupportTicketStrategy;
-use routes\SupportTicketStrategies\GetSupportTicketStrategy;
-use routes\SupportTicketStrategies\UpdateSupportTicketStrategy;
-use routes\TrackingStatusStrategies\AddTrackingStatusStrategy;
-use routes\TrackingStatusStrategies\DeleteTrackingStatusStrategy;
-use routes\TrackingStatusStrategies\GetTrackingStatusCollectionStrategy;
-use routes\TrackingStatusStrategies\GetTrackingStatusStrategy;
-use routes\TrackingStatusStrategies\UpdateTrackingStatusStrategy;
-use routes\UserStrategies\AddUserStrategy;
-use routes\UserStrategies\DeleteUserStrategy;
-use routes\UserStrategies\GetUserCollectionStrategy;
-use routes\UserStrategies\GetUserStrategy;
-use routes\UserStrategies\LogInUserStrategy;
-use routes\UserStrategies\UpdateUserStrategy;
+use routes\RouterStrategies\AddStrategy;
+use routes\RouterStrategies\DeleteStrategy;
+use routes\RouterStrategies\GetCollectionStrategy;
+use routes\RouterStrategies\GetStrategy;
+use routes\RouterStrategies\LogInUserStrategy;
+use routes\RouterStrategies\LogOutStrategy;
+use routes\RouterStrategies\UpdateStrategy;
 use security\PostOfficeSecurity\AlterPostOfficeSecurity;
-use security\ShipmentSecurity\DeleteShipmentSecurity;
+use security\ShipmentSecurity\AlterShipmentSecurity;
 use security\ShipmentSecurity\GetShipmentCollectionSecurity;
-use security\ShipmentSecurity\GetShipmentSecurity;
-use security\ShipmentSecurity\UpdateShipmentSecurity;
-use security\SupportTicketSecurity\DeleteSupportTicketSecurity;
+use security\SupportTicketSecurity\AlterTicketSecurity;
 use security\SupportTicketSecurity\GetCollectionSupportTicketSecurity;
-use security\SupportTicketSecurity\GetSupportTicketSecurity;
 use security\SupportTicketSecurity\UpdateSupportTicketSecurity;
-use security\TrackingStatusSecurity\DeleteTrackingStatusSecurity;
+use security\TrackingStatusSecurity\AlterTrackingStatusSecurity;
 use security\TrackingStatusSecurity\GetTrackingStatusCollectionSecurity;
-use security\TrackingStatusSecurity\GetTrackingStatusSecurity;
-use security\TrackingStatusSecurity\UpdateTrackingStatusSecurity;
-use security\UserSecurity\DeleteUserSecurity;
+use security\UserSecurity\AlterUserSecurity;
 use security\UserSecurity\GetUserCollectionSecurity;
-use security\UserSecurity\GetUserSecurity;
-use security\UserSecurity\UpdateUserSecurity;
 
 session_start();
 
@@ -51,36 +30,76 @@ require_once __DIR__ . '/../autoload.php';
 
 $router = new Router();
 
-$router->register('GET', '#^/users$#', new GetUserCollectionSecurity(new GetUserCollectionStrategy()));
-$router->register('GET', '#^/users/(\d+)$#', new GetUserSecurity(new GetUserStrategy()));
-$router->register('POST', '#^/users$#', new AddUserStrategy());
-$router->register('POST', '#^/login$#', new LoginUserStrategy());
-$router->register('PATCH', '#^/users/(\d+)$#', new UpdateUserSecurity(new UpdateUserStrategy()));
-$router->register('DELETE', '#^/users/(\d+)$#', new DeleteUserSecurity(new DeleteUserStrategy()));
+$userController = new UserController();
+$postOfficeController = new PostOfficeController();
+$shipmentController = new ShipmentController();
+$supportTicketController = new SupportTicketController();
+$trackingStatusController = new TrackingStatusController();
 
-$router->register('GET', '#^/shipments$#', new GetShipmentCollectionSecurity(new GetShipmentCollectingStrategy()));
-$router->register('GET', '#^/shipments/(\d+)$#', new GetShipmentSecurity(new GetShipmentStrategy()));
-$router->register('POST', '#^/shipments#', new AddShipmentStrategy());
-$router->register('PATCH', '#^/shipments/(\d+)$#', new UpdateShipmentSecurity(new UpdateShipmentStrategy()));
-$router->register('DELETE', '#^/shipments/(\d+)$#', new DeleteShipmentSecurity(new DeleteShipmentStrategy()));
+$getUser = new GetStrategy($userController);
+$getUsers = new GetCollectionStrategy($userController);
+$addUser = new AddStrategy($userController);
+$updateUser = new UpdateStrategy($userController);
+$deleteUser = new DeleteStrategy($userController);
+$loginUser = new LogInUserStrategy();
+$logoutUser = new LogOutStrategy();
 
-$router->register('GET', '#^/tracking-status$#', new GetTrackingStatusCollectionSecurity(new GetTrackingStatusCollectionStrategy()));
-$router->register('GET', '#^/tracking-status/(\d+)$#', new GetTrackingStatusSecurity(new GetTrackingStatusStrategy()));
-$router->register('POST', '#^/tracking-status#', new AddTrackingStatusStrategy());
-$router->register('PATCH', '#^/tracking-status/(\d+)$#', new UpdateTrackingStatusSecurity(new UpdateTrackingStatusStrategy()));
-$router->register('DELETE', '#^/tracking-status/(\d+)$#', new DeleteTrackingStatusSecurity(new DeleteTrackingStatusStrategy()));
+$router->register('GET', '#^/users$#', new GetUserCollectionSecurity($getUsers));
+$router->register('GET', '#^/users/(\d+)$#', new AlterUserSecurity($getUser));
+$router->register('POST', '#^/users$#', new AlterUserSecurity($addUser));
+$router->register('POST', '#^/login$#', $loginUser);
+$router->register('GET', '#^/logout$#', $logoutUser);
+$router->register('PATCH', '#^/users/(\d+)$#', new AlterUserSecurity($updateUser));
+$router->register('DELETE', '#^/users/(\d+)$#', new AlterUserSecurity($deleteUser));
 
-$router->register('GET', '#^/post-office$#', new GetCollectionPostOfficeStrategy());
-$router->register('GET', '#^/post-office/(\d+)$#', new GetPostOfficeStrategy());
-$router->register('POST', '#^/post-office#', new AlterPostOfficeSecurity(new AddPostOfficeStrategy()));
-$router->register('PATCH', '#^/post-office/(\d+)$#', new AlterPostOfficeSecurity(new UpdatePostOfficeStrategy()));
-$router->register('DELETE', '#^/post-office/(\d+)$#', new AlterPostOfficeSecurity(new DeletePostOfficeStrategy()));
+$getShipment = new GetStrategy($shipmentController);
+$getShipments = new GetCollectionStrategy($shipmentController);
+$addShipment = new AddStrategy($shipmentController);
+$updateShipment = new UpdateStrategy($shipmentController);
+$deleteShipment = new DeleteStrategy($shipmentController);
 
-$router->register('GET', '#^/support-tickets$#', new GetCollectionSupportTicketSecurity(new GetCollectionSupportTicketStrategy()));
-$router->register('GET', '#^/support-tickets/(\d+)$#', new GetSupportTicketSecurity(new GetSupportTicketStrategy()));
-$router->register('POST', '#^/support-tickets#', new AddSupportTicketStrategy());
-$router->register('PATCH', '#^/support-tickets/(\d+)$#',  new UpdateSupportTicketSecurity(new UpdateSupportTicketStrategy()));
-$router->register('DELETE', '#^/support-tickets/(\d+)$#', new DeleteSupportTicketSecurity(new DeleteSupportTicketStrategy()));
+$router->register('GET', '#^/shipments$#', new GetShipmentCollectionSecurity($getShipments));
+$router->register('GET', '#^/shipments/(\d+)$#', new AlterShipmentSecurity($getShipment));
+$router->register('POST', '#^/shipments#', $addShipment);
+$router->register('PATCH', '#^/shipments/(\d+)$#', new AlterShipmentSecurity($updateShipment));
+$router->register('DELETE', '#^/shipments/(\d+)$#', new AlterShipmentSecurity($deleteShipment));
+
+$getTrackingStatus = new GetStrategy($trackingStatusController);
+$getTrackingStatuses = new GetCollectionStrategy($trackingStatusController);
+$addTrackingStatus = new AddStrategy($trackingStatusController);
+$updateTrackingStatus = new UpdateStrategy($trackingStatusController);
+$deleteTrackingStatus = new DeleteStrategy($trackingStatusController);
+
+$router->register('GET', '#^/tracking-status$#', new GetTrackingStatusCollectionSecurity($getTrackingStatuses));
+$router->register('GET', '#^/tracking-status/(\d+)$#', new AlterTrackingStatusSecurity($getTrackingStatus));
+$router->register('POST', '#^/tracking-status#', $addTrackingStatus);
+$router->register('PATCH', '#^/tracking-status/(\d+)$#', new AlterTrackingStatusSecurity($updateTrackingStatus));
+$router->register('DELETE', '#^/tracking-status/(\d+)$#', new AlterTrackingStatusSecurity($deleteTrackingStatus));
+
+$getPostOffice = new GetStrategy($postOfficeController);
+$getPostOffices = new GetCollectionStrategy($postOfficeController);
+$addPostOffice = new AddStrategy($postOfficeController);
+$updatePostOffice = new UpdateStrategy($postOfficeController);
+$deletePostOffice = new DeleteStrategy($postOfficeController);
+
+$router->register('GET', '#^/post-office$#', $getPostOffices);
+$router->register('GET', '#^/post-office/(\d+)$#', $getPostOffice);
+$router->register('POST', '#^/post-office#', new AlterPostOfficeSecurity($addPostOffice));
+$router->register('PATCH', '#^/post-office/(\d+)$#', new AlterPostOfficeSecurity($updatePostOffice));
+$router->register('DELETE', '#^/post-office/(\d+)$#', new AlterPostOfficeSecurity($deletePostOffice));
+
+$getSupportTicket = new GetStrategy($supportTicketController);
+$getSupportTickets = new GetCollectionStrategy($supportTicketController);
+$addSupportTicket = new AddStrategy($supportTicketController);
+$updateSupportTicket = new UpdateStrategy($supportTicketController);
+$deleteSupportTicket = new DeleteStrategy($supportTicketController);
+
+$router->register('GET', '#^/support-tickets$#', new GetCollectionSupportTicketSecurity($getSupportTickets));
+$router->register('GET', '#^/support-tickets/(\d+)$#', new AlterTicketSecurity($getSupportTicket));
+$router->register('POST', '#^/support-tickets#', $addSupportTicket);
+$router->register('PATCH', '#^/support-tickets/(\d+)$#', new UpdateSupportTicketSecurity($updateSupportTicket));
+$router->register('DELETE', '#^/support-tickets/(\d+)$#', new AlterTicketSecurity($deleteSupportTicket));
+
 
 $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
 $method = $_SERVER['REQUEST_METHOD'];
