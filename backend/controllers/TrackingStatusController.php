@@ -5,16 +5,14 @@ namespace controllers;
 use models\TrackingStatus;
 use repository\TrackingStatusRepository;
 
-class TrackingStatusController
+class TrackingStatusController extends AbstractController
 {
-    private TrackingStatusRepository $repository;
-
     public function __construct()
     {
-        $this->repository = new TrackingStatusRepository();
+        parent::__construct(new TrackingStatusRepository());
     }
 
-    public function getTrackingStatuses(): void
+    public function getAllEntities(): void
     {
         $data = [];
         $trackingStatuses = $this->repository->all();
@@ -26,7 +24,7 @@ class TrackingStatusController
         echo json_encode($data);
     }
 
-    public function getTrackingStatusById(int $id): void
+    public function getEntityById(int $id): void
     {
         $trackingStatus = $this->repository->find($id);
         if (!$trackingStatus) {
@@ -39,7 +37,7 @@ class TrackingStatusController
         echo json_encode($trackingStatus->jsonSerialize());
     }
 
-    public function addTrackingStatus(): void
+    public function addEntity(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $trackingStatus = new TrackingStatus();
@@ -63,11 +61,12 @@ class TrackingStatusController
         }
 
         $this->repository->save($trackingStatus);
+        header('Content-Type: application/json');
         http_response_code(201);
         echo json_encode(['message' => 'Tracking status created']);
     }
 
-    public function updateTrackingStatus(int $id): void
+    public function updateEntity(int $id): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $trackingStatus = $this->repository->find($id);
@@ -79,11 +78,12 @@ class TrackingStatusController
         }
 
         $success = $this->repository->update($trackingStatus, $data);
+        header('Content-Type: application/json');
         http_response_code($success ? 200 : 400);
         echo json_encode(['message' => $success ? 'Tracking status updated' : 'Update failed']);
     }
 
-    public function deleteTrackingStatus(int $id): void
+    public function deleteEntity(int $id): void
     {
         $trackingStatus = $this->repository->find($id);
 
@@ -94,6 +94,7 @@ class TrackingStatusController
         }
 
         $this->repository->delete($trackingStatus);
+        header('Content-Type: application/json');
         http_response_code(202);
         echo json_encode(['message' => 'Tracking status deleted']);
     }

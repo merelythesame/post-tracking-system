@@ -6,7 +6,7 @@ use config\Database;
 use models\SupportTicket;
 use PDO;
 
-class SupportTicketRepository
+class SupportTicketRepository implements RepositoryInterface
 {
     public function all(): array
     {
@@ -45,7 +45,7 @@ class SupportTicketRepository
         return $tickets;
     }
 
-    public function save(SupportTicket $ticket): bool
+    public function save(object $entity): bool
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
@@ -54,15 +54,15 @@ class SupportTicketRepository
         ");
 
         return $stmt->execute([
-            $ticket->getUserId(),
-            $ticket->getSubject(),
-            $ticket->getMessage(),
-            $ticket->getStatus(),
-            $ticket->getCreatedAt(),
+            $entity->getUserId(),
+            $entity->getSubject(),
+            $entity->getMessage(),
+            $entity->getStatus(),
+            $entity->getCreatedAt(),
         ]);
     }
 
-    public function update(SupportTicket $ticket, array $fields): bool
+    public function update(object $entity, array $fields): bool
     {
         $pdo = Database::getInstance();
         $setClauses = [];
@@ -75,18 +75,18 @@ class SupportTicketRepository
 
         if (empty($setClauses)) return false;
 
-        $values[] = $ticket->getId();
+        $values[] = $entity->getId();
         $sql = "UPDATE support_tickets SET " . implode(', ', $setClauses) . " WHERE id = ?";
         $stmt = $pdo->prepare($sql);
 
         return $stmt->execute($values);
     }
 
-    public function delete(SupportTicket $ticket): bool
+    public function delete(object $entity): bool
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("DELETE FROM support_tickets WHERE id = ?");
-        return $stmt->execute([$ticket->getId()]);
+        return $stmt->execute([$entity->getId()]);
     }
 
     private function hydrate(array $row): SupportTicket

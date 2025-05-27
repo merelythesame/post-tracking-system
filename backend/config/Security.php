@@ -30,5 +30,11 @@ class Security
         return null;
     }
 
+    public static function logout(): void
+    {
+        self::$instance = null;
+        unset($_SESSION['user_id']);
+    }
+
 
 }

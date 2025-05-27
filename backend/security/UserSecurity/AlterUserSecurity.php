@@ -2,12 +2,9 @@
 
 namespace security\UserSecurity;
 
-use config\Security;
-use models\User;
 use security\AbstractSecurity;
-use security\SecurityDecorator;
 
-class GetUserCollectionSecurity extends AbstractSecurity
+class AlterUserSecurity extends AbstractSecurity
 {
     public function handle(array $params = []): void
     {
@@ -17,11 +14,15 @@ class GetUserCollectionSecurity extends AbstractSecurity
             return;
         }
 
-        if ($this->isAdmin($user)) {
+        $isUserOwner = $this->isUser($user) && $this->isOwner($user, $params[0]);
+        $isAdmin = $this->isAdmin($user);
+
+        if ($isUserOwner || $isAdmin) {
             parent::handle($params);
         } else {
-            $this->errorResponse(403, 'Forbidden - admin access required.');
+            $this->errorResponse(403, 'Forbidden - you do not have access.');
         }
+
     }
 
 }

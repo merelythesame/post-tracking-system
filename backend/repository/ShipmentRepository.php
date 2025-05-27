@@ -6,7 +6,7 @@ use config\Database;
 use models\Shipment;
 use PDO;
 
-class ShipmentRepository
+class ShipmentRepository implements RepositoryInterface
 {
     public function all(): array
     {
@@ -42,7 +42,7 @@ class ShipmentRepository
         return $shipments;
     }
 
-    public function save(Shipment $shipment): bool
+    public function save(object $entity): bool
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
@@ -50,17 +50,17 @@ class ShipmentRepository
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
         return $stmt->execute([
-            $shipment->getUserId(),
-            $shipment->getReceiverName(),
-            $shipment->getAddress(),
-            $shipment->getWeight(),
-            $shipment->getType(),
-            $shipment->getPrice(),
+            $entity->getUserId(),
+            $entity->getReceiverName(),
+            $entity->getAddress(),
+            $entity->getWeight(),
+            $entity->getType(),
+            $entity->getPrice(),
             time(),
         ]);
     }
 
-    public function update(Shipment $shipment, array $fields): bool
+    public function update(object $entity, array $fields): bool
     {
         $pdo = Database::getInstance();
 
@@ -74,18 +74,18 @@ class ShipmentRepository
 
         if (empty($setClauses)) return false;
 
-        $values[] = $shipment->getId();
+        $values[] = $entity->getId();
 
         $sql = "UPDATE shipments SET " . implode(', ', $setClauses) . " WHERE id = ?";
         $stmt = $pdo->prepare($sql);
         return $stmt->execute($values);
     }
 
-    public function delete(Shipment $shipment): bool
+    public function delete(object $entity): bool
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("DELETE FROM shipments WHERE id = ?");
-        return $stmt->execute([$shipment->getId()]);
+        return $stmt->execute([$entity->getId()]);
     }
 
     private function hydrateShipment(array $row): Shipment

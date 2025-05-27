@@ -4,34 +4,31 @@ namespace security\SupportTicketSecurity;
 
 use config\Security;
 use models\User;
+use security\AbstractSecurity;
 use security\SecurityDecorator;
 
-class GetCollectionSupportTicketSecurity extends SecurityDecorator
+class GetCollectionSupportTicketSecurity extends AbstractSecurity
 {
     public function handle(array $params = []): void
     {
-        $currentUser = Security::getUser();
-
-        if(!$currentUser){
-            http_response_code(401);
-            echo json_encode(['message' => 'Unauthorized - please log in.']);
+        $user = $this->isAuthenticated();
+        if (!$user) {
+            $this->errorResponse(401, 'Unauthorized - please log in.');
             return;
         }
 
-        if($currentUser->getRole() === User::ROLE_USER ){
-            $params[] = $currentUser->getId();
+        if ($this->isUser($user)) {
+            $params[] = $user->getId();
             parent::handle($params);
             return;
         }
 
-        if($currentUser->getRole() === User::ROLE_ADMIN ){
+        if ($this->isAdmin($user)) {
             parent::handle($params);
             return;
         }
 
-        http_response_code(403);
-        echo json_encode(['message' => 'Forbidden - you do not have access.']);
-
+        $this->errorResponse(403, 'Forbidden - you do not have access.');
     }
 
 }
