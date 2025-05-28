@@ -2,6 +2,7 @@
 
 namespace controllers;
 use config\Security;
+use http\Message;
 use models\User;
 use repository\UserRepository;
 
@@ -91,21 +92,21 @@ class UserController extends AbstractController
         $data = json_decode(file_get_contents('php://input'), true);
         if (!is_array($data)) {
             http_response_code(400);
-            echo json_encode(['message' => 'Invalid input']);
+            echo json_encode(['Error' => 'Invalid input']);
             return;
         }
 
         $user = $this->repository->findByEmail($data['email']);
         if (!$user || !password_verify($data['password'], $user->getPassword())) {
             http_response_code(401);
-            echo json_encode(['message' => 'Invalid credentials']);
+            echo json_encode(['Error' => 'Invalid credentials']);
             return;
         }
 
         Security::setUser($user);
         header('Content-Type: application/json');
         http_response_code(200);
-        echo json_encode(['message' => 'Successfully logged in']);
+        echo json_encode(['message' => 'Successfully logged in', 'id' => $user->getId(), 'role' => $user->getRole()]);
     }
 
     public function logout(): void

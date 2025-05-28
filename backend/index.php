@@ -12,6 +12,15 @@ use security\TrackingStatusSecurity\{AlterTrackingStatusSecurity, GetTrackingSta
 use security\UserSecurity\{AlterUserSecurity, GetUserCollectionSecurity};
 
 session_start();
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 require_once __DIR__ . '/autoload.php';
 
@@ -33,7 +42,7 @@ $logoutUser = new LogOutStrategy();
 
 $router->register('GET', '#^/users$#', new GetUserCollectionSecurity($getUsers));
 $router->register('GET', '#^/users/(\d+)$#', new AlterUserSecurity($getUser));
-$router->register('POST', '#^/users$#', new AlterUserSecurity($addUser));
+$router->register('POST', '#^/users$#', $addUser);
 $router->register('POST', '#^/login$#', $loginUser);
 $router->register('GET', '#^/logout$#', $logoutUser);
 $router->register('PATCH', '#^/users/(\d+)$#', new AlterUserSecurity($updateUser));
