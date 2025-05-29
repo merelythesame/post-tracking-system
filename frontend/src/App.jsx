@@ -11,6 +11,9 @@ import Profile from "./pages/Profile.jsx";
 import CreateShipment from "./pages/UserPages/CreateShipment.jsx";
 import UserReceiving from "./pages/UserPages/UserReceiving.jsx";
 import AdminTracking from "./pages/AdminPages/AdminTracking.jsx";
+import AdminUsers from "./pages/AdminPages/AdminUsers.jsx";
+import AdminTickets from "./pages/AdminPages/AdminTickets.jsx";
+import AdminPostOffices from "./pages/AdminPages/AdminPostOffices.jsx";
 
 function App() {
   return (
@@ -35,6 +38,9 @@ function App() {
           >
               <Route path="tracking" element={<AdminTracking />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="tickets" element={<AdminTickets />} />
+              <Route path="post-offices" element={<AdminPostOffices />} />
           </Route>
         </Routes>
       </BrowserRouter>

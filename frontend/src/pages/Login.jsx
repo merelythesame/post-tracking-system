@@ -22,7 +22,7 @@ export default function Login() {
                 localStorage.setItem("user", JSON.stringify(user));
 
                 if (user.role === "ROLE_ADMIN") {
-                    navigate("/admin");
+                    navigate("/admin/tracking");
                 } else {
                     navigate("/user/shipments");
                 }

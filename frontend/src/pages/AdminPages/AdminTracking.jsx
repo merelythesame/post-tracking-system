@@ -2,17 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Autocomplete  from "react-google-autocomplete";
 import {toast, ToastContainer} from "react-toastify";
-
-
-function unixToDatetimeLocal(unix) {
-    if (!unix) return '';
-    return new Date(unix * 1000).toISOString().slice(0, 16);
-}
-
-function datetimeLocalToUnix(dt) {
-    return dt ? Math.floor(new Date(dt).getTime() / 1000) : null;
-}
-
+import {datetimeLocalToUnix, unixToDatetimeLocal} from "../../components/dateConvertors.js";
 
 export default function AdminTracking() {
     const [shipments, setShipments] = useState([]);
@@ -193,7 +183,9 @@ export default function AdminTracking() {
 
                         <label className="block mb-2">Send At</label>
                         <input
-                            type="datetime-local"
+                            id='sent'
+                            name='sent'
+                            type="date"
                             value={sendAt}
                             onChange={(e) => setSendAt(e.target.value)}
                             className="w-full border p-2 rounded mb-4"
@@ -201,7 +193,9 @@ export default function AdminTracking() {
 
                         <label className="block mb-2">Arrive At</label>
                         <input
-                            type="datetime-local"
+                            id='arrived'
+                            name='arrived'
+                            type="date"
                             value={arriveAt}
                             onChange={(e) => setArriveAt(e.target.value)}
                             className="w-full border p-2 rounded mb-4"

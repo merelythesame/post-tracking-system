@@ -1,4 +1,5 @@
 import React from 'react';
+import {unixToDatetimeLocal} from "./dateConvertors.js";
 
 export default function TrackingDetails({ shipment, trackingStatuses, postOffices }) {
     const tracking = trackingStatuses.find(t => t.shipment_id === shipment.id);
@@ -12,8 +13,8 @@ export default function TrackingDetails({ shipment, trackingStatuses, postOffice
                 <p>Status: {tracking?.status || 'Unknown'}</p>
                 {tracking?.location !== '' ?
                     <div>
-                        <p>Send At: {tracking?.sendAt || 'N/A'}</p>
-                        <p>Arrive At: {tracking?.arriveAt || 'N/A'}</p>
+                        <p>Send At: {unixToDatetimeLocal(tracking?.sendAt) || 'N/A'}</p>
+                        <p>Arrive At: {unixToDatetimeLocal(tracking?.arriveAt) || 'N/A'}</p>
                     </div>
                     : ''
                 }
