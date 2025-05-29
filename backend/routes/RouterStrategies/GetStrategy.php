@@ -11,7 +11,11 @@ readonly class GetStrategy implements RouterStrategyInterface
 
     public function handle(array $params = []): void
     {
-        $this->controller->getEntityById($params[0]);
+        if (str_contains($params[0], '@')) {
+            $this->controller->getEntityByEmail($params[0]);
+        } else {
+            $this->controller->getEntityById((int) $params[0]);
+        }
     }
 
 }

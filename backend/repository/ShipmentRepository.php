@@ -32,8 +32,8 @@ class ShipmentRepository implements RepositoryInterface
     public function findByUserId(int $userId): array
     {
         $pdo = Database::getInstance();
-        $stmt = $pdo->prepare("SELECT * FROM shipments WHERE user_id = ?");
-        $stmt->execute([$userId]);
+        $stmt = $pdo->prepare("SELECT * FROM shipments WHERE user_id = ? OR receiver_id = ?");
+        $stmt->execute([$userId, $userId]);
 
         $shipments = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -42,22 +42,26 @@ class ShipmentRepository implements RepositoryInterface
         return $shipments;
     }
 
-    public function save(object $entity): bool
+    public function save(object $entity): int
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
-            INSERT INTO shipments (user_id, receiver_name, address, weight, type, price, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ");
-        return $stmt->execute([
+        INSERT INTO shipments (user_id, receiver_id, receiver_name, sender_name, address, weight, type, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
+        $stmt->execute([
             $entity->getUserId(),
+            $entity->getReceiverId(),
             $entity->getReceiverName(),
+            $entity->getSenderName(),
             $entity->getAddress(),
             $entity->getWeight(),
             $entity->getType(),
-            $entity->getPrice(),
             time(),
         ]);
+
+        return (int) $pdo->lastInsertId();
     }
 
     public function update(object $entity, array $fields): bool
@@ -94,10 +98,11 @@ class ShipmentRepository implements RepositoryInterface
         $shipment->setId($row["id"]);
         $shipment->setUserId($row["user_id"]);
         $shipment->setReceiverName($row["receiver_name"]);
+        $shipment->setSenderName($row["sender_name"]);
+        $shipment->setReceiverId($row["receiver_id"]);
         $shipment->setAddress($row["address"]);
         $shipment->setWeight($row["weight"]);
         $shipment->setType($row["type"]);
-        $shipment->setPrice($row["price"]);
         $shipment->setCreatedAt($row["created_at"]);
 
         return $shipment;

@@ -41,30 +41,28 @@ class TrackingStatusController extends AbstractController
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $trackingStatus = new TrackingStatus();
+
+        if (!isset($data['shipmentId'], $data['postOfficeId'])) {
+            http_response_code(400);
+            echo json_encode(['message' => 'shipmentId and postOfficeId are required']);
+            return;
+        }
+
         $trackingStatus->setShipmentId($data['shipmentId']);
-        $trackingStatus->setStatus($data['status']);
-        $trackingStatus->setLocation($data['location']);
+        $trackingStatus->setStatus($data['status'] ?? 'pending');
+        $trackingStatus->setLocation($data['location'] ?? '');
         $trackingStatus->setPostOfficeId($data['postOfficeId']);
 
-        if(in_array('sendAt', $data)){
-            $trackingStatus->setSendAt($data['sendAt']);
-        }
-        else{
-            $trackingStatus->setSendAt(null);
-        }
-
-        if(in_array('arriveAt', $data)){
-            $trackingStatus->setArriveAt($data['arriveAt']);
-        }
-        else{
-            $trackingStatus->setArriveAt(null);
-        }
+        $trackingStatus->setSendAt($data['sendAt'] ?? null);
+        $trackingStatus->setArriveAt($data['arriveAt'] ?? null);
 
         $this->repository->save($trackingStatus);
+
         header('Content-Type: application/json');
         http_response_code(201);
         echo json_encode(['message' => 'Tracking status created']);
     }
+
 
     public function updateEntity(int $id): void
     {

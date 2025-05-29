@@ -32,7 +32,8 @@ $shipmentController = new ShipmentController();
 $supportTicketController = new SupportTicketController();
 $trackingStatusController = new TrackingStatusController();
 
-$getUser = new GetStrategy($userController);
+$getUserById = new GetStrategy($userController);
+$getUserByEmail = new GetStrategy($userController);
 $getUsers = new GetCollectionStrategy($userController);
 $addUser = new AddStrategy($userController);
 $updateUser = new UpdateStrategy($userController);
@@ -41,7 +42,8 @@ $loginUser = new LogInUserStrategy();
 $logoutUser = new LogOutStrategy();
 
 $router->register('GET', '#^/users$#', new GetUserCollectionSecurity($getUsers));
-$router->register('GET', '#^/users/(\d+)$#', new AlterUserSecurity($getUser));
+$router->register('GET', '#^/users/(\d+)$#', new AlterUserSecurity($getUserById));
+$router->register('GET', '#^/users/([^/]+)$#', $getUserByEmail);
 $router->register('POST', '#^/users$#', $addUser);
 $router->register('POST', '#^/login$#', $loginUser);
 $router->register('GET', '#^/logout$#', $logoutUser);

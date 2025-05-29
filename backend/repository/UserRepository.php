@@ -38,7 +38,7 @@ class UserRepository implements RepositoryInterface
         return $row ? $this->hydrateUser($row) : null;
     }
 
-    public function save(object $entity): bool
+    public function save(object $entity): int
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
@@ -46,7 +46,7 @@ class UserRepository implements RepositoryInterface
             VALUES (?, ? ,?, ?, ?, ?)
         ");
         $hashedPassword = password_hash($entity->getPassword(), PASSWORD_DEFAULT);
-        return $stmt->execute([
+        $stmt->execute([
             $entity->getName(),
             $entity->getSurname(),
             $entity->getEmail(),
@@ -54,6 +54,8 @@ class UserRepository implements RepositoryInterface
             $entity->getPhoneNumber(),
             $entity->getRole() ?? User::ROLE_USER,
         ]);
+
+        return (int) $pdo->lastInsertId();
     }
 
     public function update(object $entity, array $fields): bool

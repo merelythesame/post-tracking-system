@@ -45,7 +45,7 @@ class SupportTicketRepository implements RepositoryInterface
         return $tickets;
     }
 
-    public function save(object $entity): bool
+    public function save(object $entity): int
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
@@ -53,13 +53,15 @@ class SupportTicketRepository implements RepositoryInterface
             VALUES (?, ?, ?, ?, ?)
         ");
 
-        return $stmt->execute([
+        $stmt->execute([
             $entity->getUserId(),
             $entity->getSubject(),
             $entity->getMessage(),
             $entity->getStatus(),
             $entity->getCreatedAt(),
         ]);
+
+        return (int) $pdo->lastInsertId();
     }
 
     public function update(object $entity, array $fields): bool
