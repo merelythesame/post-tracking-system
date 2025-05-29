@@ -11,11 +11,11 @@ class Shipment implements JsonSerializable
     private ?int $receiver_id = null;
     private ?string $receiverName = null;
     private ?string $senderName = null;
-    private ?string $address = null;
     private ?float $weight = null;
     private ?string $type = null;
     private ?string $created_at = null;
-    private ?User $user = null;
+    private ?int $sendOffice = null;
+    private ?int $receiveOffice = null;
 
     public function getUserId(): ?int
     {
@@ -25,17 +25,6 @@ class Shipment implements JsonSerializable
     public function setUserId(?int $user_id): void
     {
         $this->user_id = $user_id;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): void
-    {
-        $this->user = $user;
-        $this->user_id = $user?->getId();
     }
 
     public function getId(): ?int
@@ -56,16 +45,6 @@ class Shipment implements JsonSerializable
     public function setReceiverName(?string $receiverName): void
     {
         $this->receiverName = $receiverName;
-    }
-
-    public function getAddress(): ?string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?string $address): void
-    {
-        $this->address = $address;
     }
 
     public function getWeight(): ?float
@@ -117,6 +96,25 @@ class Shipment implements JsonSerializable
     {
         $this->senderName = $senderName;
     }
+    public function getSendOffice(): ?int
+    {
+        return $this->sendOffice;
+    }
+
+    public function setSendOffice(?int $sendOffice): void
+    {
+        $this->sendOffice = $sendOffice;
+    }
+
+    public function getReceiveOffice(): ?int
+    {
+        return $this->receiveOffice;
+    }
+
+    public function setReceiveOffice(?int $receiveOffice): void
+    {
+        $this->receiveOffice = $receiveOffice;
+    }
 
     public function jsonSerialize(): array
     {
@@ -126,10 +124,11 @@ class Shipment implements JsonSerializable
             'receiverName' => $this->getReceiverName(),
             'senderName' => $this->getSenderName(),
             'receiver_id' => $this->getReceiverId(),
-            'address' => $this->getAddress(),
             'weight' => $this->getWeight(),
             'type' => $this->getType(),
             'created_at' => $this->getCreatedAt(),
+            'sendOffice' => $this->getSendOffice(),
+            'receiveOffice' => $this->getReceiveOffice(),
         ];
     }
 

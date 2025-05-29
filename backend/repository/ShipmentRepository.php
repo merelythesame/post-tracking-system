@@ -46,8 +46,8 @@ class ShipmentRepository implements RepositoryInterface
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
-        INSERT INTO shipments (user_id, receiver_id, receiver_name, sender_name, address, weight, type, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO shipments (user_id, receiver_id, receiver_name, sender_name, weight, type, created_at, send_office, receive_office)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
         $stmt->execute([
@@ -55,10 +55,11 @@ class ShipmentRepository implements RepositoryInterface
             $entity->getReceiverId(),
             $entity->getReceiverName(),
             $entity->getSenderName(),
-            $entity->getAddress(),
             $entity->getWeight(),
             $entity->getType(),
             time(),
+            $entity->getSendOffice(),
+            $entity->getReceiveOffice()
         ]);
 
         return (int) $pdo->lastInsertId();
@@ -100,10 +101,11 @@ class ShipmentRepository implements RepositoryInterface
         $shipment->setReceiverName($row["receiver_name"]);
         $shipment->setSenderName($row["sender_name"]);
         $shipment->setReceiverId($row["receiver_id"]);
-        $shipment->setAddress($row["address"]);
         $shipment->setWeight($row["weight"]);
         $shipment->setType($row["type"]);
         $shipment->setCreatedAt($row["created_at"]);
+        $shipment->setSendOffice($row["send_office"]);
+        $shipment->setReceiveOffice($row["receive_office"]);
 
         return $shipment;
     }

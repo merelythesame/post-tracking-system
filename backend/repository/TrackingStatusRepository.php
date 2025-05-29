@@ -33,16 +33,15 @@ class TrackingStatusRepository implements RepositoryInterface
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
-            INSERT INTO tracking_status (shipment_id, status, location, send_at, arrive_at, post_office_id)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO tracking_status (shipment_id, status, location, send_at, arrive_at)
+            VALUES (?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $entity->getShipmentId(),
             $entity->getStatus(),
             $entity->getLocation(),
             $entity->getSendAt(),
-            $entity->getArriveAt(),
-            $entity->getPostOfficeId()
+            $entity->getArriveAt()
         ]);
 
         return (int) $pdo->lastInsertId();
@@ -85,7 +84,6 @@ class TrackingStatusRepository implements RepositoryInterface
         $trackingStatus->setLocation($row['location']);
         $trackingStatus->setSendAt($row['send_at']);
         $trackingStatus->setArriveAt($row['arrive_at']);
-        $trackingStatus->setPostOfficeId($row['post_office_id']);
 
         return $trackingStatus;
     }
