@@ -35,20 +35,20 @@ export default function AdminUsers() {
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
             <ToastContainer position="top-right" autoClose={3000} />
-            <h1 className="text-3xl font-bold mb-6">Users Management</h1>
+            <h1 className="text-2xl font-bold mb-6">Users Management</h1>
             {users.length === 0 ? (
-                <p className="text-gray-500">No users with role <strong>ROLE_USER</strong>.</p>
+                <p className="text-gray-500">No users with role user.</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {users.map(user => (
                         <div key={user.id} className="p-6 bg-white rounded-xl shadow-md flex flex-col gap-2">
                             <h2 className="text-xl font-semibold">{user.name} {user.surname}</h2>
-                            <p><strong>Email:</strong> {user.email}</p>
-                            <p><strong>Phone:</strong> {user.phoneNumber}</p>
+                            <p className="text-sm text-gray-600"><strong>Email:</strong> {user.email}</p>
+                            <p className="text-sm text-gray-600"><strong>Phone:</strong> {user.phoneNumber}</p>
                             <div className='flex justify-center'>
                                 <button
                                     onClick={() => handleDelete(user.id)}
-                                    className="mt-4 w-fit bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                                    className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-600"
                                 >
                                     Delete User
                                 </button>

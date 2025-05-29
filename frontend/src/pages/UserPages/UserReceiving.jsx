@@ -5,6 +5,7 @@ export default function UserReceiving() {
     const [shipments, setShipments] = useState([]);
     const [trackingStatuses, setTrackingStatuses] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [postOffices, setPostOffices] = useState([]);
     const userId = JSON.parse(localStorage.getItem('user'))?.id;
 
     useEffect(() => {
@@ -13,12 +14,14 @@ export default function UserReceiving() {
                 const [shipmentsRes, trackingRes, postOfficesRes] = await Promise.all([
                     axios.get('http://localhost:8000/shipments', { withCredentials: true }),
                     axios.get('http://localhost:8000/tracking-status', { withCredentials: true }),
+                    axios.get('http://localhost:8000/post-office', { withCredentials: true }),
                 ]);
 
                 const filteredShipments = shipmentsRes.data.filter(shipment => shipment.receiver_id === userId);
 
                 setShipments(filteredShipments);
                 setTrackingStatuses(trackingRes.data);
+                setPostOffices(postOfficesRes.data);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -34,11 +37,15 @@ export default function UserReceiving() {
 
     const combinedShipments = shipments.map((shipment) => {
         const tracking = trackingStatuses.find(status => status.shipment_id === shipment.id);
+        const sendOffice = postOffices.find(office => office.id === shipment.sendOffice);
+        const receiveOffice = postOffices.find(office => office.id === shipment.receiveOffice);
 
         return {
             ...shipment,
             status: tracking?.status || 'Unknown',
             location: tracking?.location || 'Unknown',
+            sendOffice: sendOffice || {},
+            receiveOffice: receiveOffice || {}
         };
     });
 

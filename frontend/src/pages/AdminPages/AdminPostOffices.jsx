@@ -86,11 +86,11 @@ export default function AdminPostOffices() {
         <div className="p-6 bg-gray-50 min-h-screen">
             <ToastContainer position="top-right" autoClose={3000} />
             <div className='flex justify-between'>
-                <h1 className="text-3xl font-bold mb-6">Post Offices Management</h1>
+                <h1 className="text-2xl font-bold mb-6">Post Offices Management</h1>
 
                 <button
                     onClick={() => setShowAddForm(!showAddForm)}
-                    className="mb-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    className="rounded-md bg-indigo-600 px-4 h-fit py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                 >
                     {showAddForm ? 'Hide' : 'Add New'}
                 </button>
@@ -130,7 +130,7 @@ export default function AdminPostOffices() {
                         <input type="text" name="city" placeholder="City"  onChange={handleChange} required className="flex-1 rounded-md bg-white px-3 py-1.5 text-base text-gray-900  outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm" />
                         <input type="text" name="postalCode" placeholder="Postal Code"  onChange={handleChange} required className="flex-1 rounded-md bg-white px-3 py-1.5 text-base text-gray-900  outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm" />
                     </div>
-                    <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add</button>
+                    <button type="submit" className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-600">Add</button>
                 </form>
             )}
 
@@ -138,9 +138,9 @@ export default function AdminPostOffices() {
                 {offices.map(office => (
                     <div key={office.id} className="bg-white p-6 rounded-xl shadow-md space-y-2">
                         <h3 className="text-xl font-semibold">{office.name}</h3>
-                        <p><strong>Address:</strong> {office.address}</p>
-                        <p><strong>City:</strong> {office.city}</p>
-                        <p><strong>Postal Code:</strong> {office.postalCode}</p>
+                        <p className="font-medium text-gray-700"><strong>Address:</strong> {office.address}</p>
+                        <p className="font-medium text-gray-700"><strong>City:</strong> {office.city}</p>
+                        <p className="font-medium text-gray-700"><strong>Postal Code:</strong> {office.postalCode}</p>
                         <div className="flex gap-2 mt-2">
                             <button
                                 onClick={() => {
@@ -152,13 +152,13 @@ export default function AdminPostOffices() {
                                         postal_code: office.postalCode
                                     });
                                 }}
-                                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                                className="rounded-md bg-yellow-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-600"
                             >
                                 Edit
                             </button>
                             <button
                                 onClick={() => handleDelete(office.id)}
-                                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                                className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-600"
                             >
                                 Delete
                             </button>

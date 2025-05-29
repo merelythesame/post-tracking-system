@@ -8,6 +8,7 @@ export default function AdminTracking() {
     const [shipments, setShipments] = useState([]);
     const [trackingStatuses, setTrackingStatuses] = useState([]);
     const [selectedShipment, setSelectedShipment] = useState(null);
+    const [postOffices, setPostOffices] = useState([]);
     const [showSendModal, setShowSendModal] = useState(false);
     const [location, setLocation] = useState('');
     const [sendAt, setSendAt] = useState('');
@@ -20,12 +21,14 @@ export default function AdminTracking() {
 
     const fetchData = async () => {
         try {
-            const [shipmentsRes, trackingRes] = await Promise.all([
+            const [shipmentsRes, trackingRes, postOfficesRes] = await Promise.all([
                 axios.get('http://localhost:8000/shipments', { withCredentials: true }),
-                axios.get('http://localhost:8000/tracking-status', { withCredentials: true })
+                axios.get('http://localhost:8000/tracking-status', { withCredentials: true }),
+                axios.get('http://localhost:8000/post-office', { withCredentials: true }),
             ]);
             setShipments(shipmentsRes.data);
             setTrackingStatuses(trackingRes.data);
+            setPostOffices(postOfficesRes.data);
         } catch (err) {
             toast.error('Error fetching data:', err);
         }
@@ -78,6 +81,8 @@ export default function AdminTracking() {
     };
 
     const trackingForSelected = trackingStatuses.find(t => t.shipment_id === selectedShipment?.id);
+    const senderOfficeForSelected = postOffices.find(t => t.id === selectedShipment?.sendOffice);
+    const receiveOfficeForSelected = postOffices.find(t => t.id === selectedShipment?.receiveOffice);
 
     return (
         <div className="flex h-screen gap-6">
@@ -117,6 +122,9 @@ export default function AdminTracking() {
                             <p className="text-gray-700"><strong>Sender:</strong> {selectedShipment.senderName || 'N/A'}</p>
                             <p className="text-gray-700"><strong>Weight:</strong> {selectedShipment.weight} kg</p>
                             <p className="text-gray-700"><strong>Type:</strong> {selectedShipment.type}</p>
+                            <p className="text-gray-700"><strong>From:</strong> {senderOfficeForSelected?.address || 'N/A'}</p>
+                            <p className="text-gray-700"><strong>To:</strong> {receiveOfficeForSelected?.address || 'N/A'}</p>
+
                         </div>
 
                         <div className="flex-1 p-6 bg-blue-50 rounded-2xl shadow-md flex flex-col gap-2">
@@ -141,7 +149,7 @@ export default function AdminTracking() {
                     <div className='flex justify-center'>
                         <button
                             onClick={() => setShowSendModal(true)}
-                            className="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                            className=" mt-6 rounded-md bg-indigo-600 px-4 h-fit py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                         >
                             Update Status
                         </button>
@@ -210,7 +218,7 @@ export default function AdminTracking() {
                             </button>
                             <button
                                 onClick={handleSend}
-                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                className="rounded-md bg-indigo-600 px-4 h-fit py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                             >
                                 Submit
                             </button>
