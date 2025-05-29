@@ -1,16 +1,17 @@
-import {useEffect, useState} from "react";
-import axios from "axios";
-import {toast, ToastContainer} from "react-toastify";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function CreateShipment() {
     const [user, setUser] = useState(null);
     const [formData, setFormData] = useState({
         email: '',
         receiverName: '',
-        address: '',
         weight: '',
         type: '',
-        postOfficeId: ''
+        sendOffice: '',
+        receiveOffice: ''
     });
 
     const [postOffices, setPostOffices] = useState([]);
@@ -22,15 +23,11 @@ export default function CreateShipment() {
             .catch(err => console.error('Error loading post offices:', err));
     }, []);
 
-    const getMyself = () => axios.get(`http://localhost:8000/users/${userId}`, { withCredentials: true })
-        .then(response => {
-            setUser(response.data);
-        })
-        .catch(err => {
-            console.log(err);
-        });
-
-    getMyself();
+    useEffect(() => {
+        axios.get(`http://localhost:8000/users/${userId}`, { withCredentials: true })
+            .then(response => setUser(response.data))
+            .catch(err => console.log(err));
+    }, [userId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -40,14 +37,14 @@ export default function CreateShipment() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-
         const shipmentData = {
             user_id: userId,
             receiverName: formData.receiverName,
             senderName: user.name + ' ' + user.surname,
-            address: formData.address,
             weight: formData.weight,
             type: formData.type,
+            sendOffice: formData.sendOffice,
+            receiveOffice: formData.receiveOffice,
             created_at: Math.floor(Date.now() / 1000)
         };
 
@@ -73,7 +70,6 @@ export default function CreateShipment() {
 
             await axios.post('http://localhost:8000/tracking-status', {
                 shipmentId: shipmentId,
-                postOfficeId: formData.postOfficeId
             }, { withCredentials: true });
 
             toast.success("Shipment and tracking created successfully!");
@@ -82,6 +78,8 @@ export default function CreateShipment() {
         }
     };
 
+    const filteredSendOffices = postOffices.filter(office => office.id !== parseInt(formData.receiveOffice));
+    const filteredReceiveOffices = postOffices.filter(office => office.id !== parseInt(formData.sendOffice));
 
     return (
         <>
@@ -89,7 +87,6 @@ export default function CreateShipment() {
             <div className="max-w-2xl mx-auto p-6 bg-white rounded shadow">
                 <h2 className="text-2xl font-bold mb-4">Create Shipment</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
-
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Receiver Email</label>
                         <input
@@ -108,18 +105,6 @@ export default function CreateShipment() {
                             type="text"
                             name="receiverName"
                             value={formData.receiverName}
-                            onChange={handleChange}
-                            required
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Address</label>
-                        <input
-                            type="text"
-                            name="address"
-                            value={formData.address}
                             onChange={handleChange}
                             required
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -151,16 +136,34 @@ export default function CreateShipment() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Post Office</label>
+                        <label className="block text-sm font-medium text-gray-700">Sending branch</label>
                         <select
-                            name="postOfficeId"
-                            value={formData.postOfficeId}
+                            name="sendOffice"
+                            value={formData.sendOffice}
                             onChange={handleChange}
                             required
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                         >
                             <option value="">Select a post office</option>
-                            {postOffices.map((office) => (
+                            {filteredSendOffices.map((office) => (
+                                <option key={office.id} value={office.id}>
+                                    {office.name} - {office.city}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Receiving branch</label>
+                        <select
+                            name="receiveOffice"
+                            value={formData.receiveOffice}
+                            onChange={handleChange}
+                            required
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                        >
+                            <option value="">Select a post office</option>
+                            {filteredReceiveOffices.map((office) => (
                                 <option key={office.id} value={office.id}>
                                     {office.name} - {office.city}
                                 </option>

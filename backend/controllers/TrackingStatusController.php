@@ -42,17 +42,9 @@ class TrackingStatusController extends AbstractController
         $data = json_decode(file_get_contents('php://input'), true);
         $trackingStatus = new TrackingStatus();
 
-        if (!isset($data['shipmentId'], $data['postOfficeId'])) {
-            http_response_code(400);
-            echo json_encode(['message' => 'shipmentId and postOfficeId are required']);
-            return;
-        }
-
         $trackingStatus->setShipmentId($data['shipmentId']);
         $trackingStatus->setStatus($data['status'] ?? 'pending');
         $trackingStatus->setLocation($data['location'] ?? '');
-        $trackingStatus->setPostOfficeId($data['postOfficeId']);
-
         $trackingStatus->setSendAt($data['sendAt'] ?? null);
         $trackingStatus->setArriveAt($data['arriveAt'] ?? null);
 

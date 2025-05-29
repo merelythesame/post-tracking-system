@@ -37,13 +37,15 @@ export default function ShipmentsPage() {
 
     const combinedShipments = shipments.map((shipment) => {
         const tracking = trackingStatuses.find(status => status.shipment_id === shipment.id);
-        const postOffice = postOffices.find(office => office.id === tracking?.post_office_id);
+        const sendOffice = postOffices.find(office => office.id === shipment.sendOffice);
+        const receiveOffice = postOffices.find(office => office.id === shipment.receiveOffice);
 
         return {
             ...shipment,
-            status: tracking?.status || 'Unknown',
-            location: tracking?.location || 'Unknown',
-            postOffice: postOffice || {},
+            status: tracking?.status || '-',
+            location: tracking?.location || '-',
+            sendOffice: sendOffice || {},
+            receiveOffice: receiveOffice || {},
         };
     });
 
@@ -64,18 +66,13 @@ export default function ShipmentsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {combinedShipments.map((shipment) => (
                     <div key={shipment.id} className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition">
-                        <h2 className="text-xl font-semibold text-indigo-600 mb-2">To: {shipment.receiverName}</h2>
-                        <p className="text-gray-700"><span className="font-medium">Address:</span> {shipment.address}</p>
+                        <h2 className="text-xl font-semibold text-indigo-600 mb-2">Shipment #{shipment.id}</h2>
+                        <p className="text-gray-700"><span className="font-medium">To:</span> {shipment.receiverName}</p>
                         <p className="text-gray-700"><span className="font-medium">Weight:</span> {shipment.weight} kg</p>
                         <p className="text-gray-700"><span className="font-medium">Type:</span> {shipment.type}</p>
                         <p className="text-gray-700"><span className="font-medium">Status:</span> <span className="capitalize">{shipment.status}</span></p>
-                        <p className="text-gray-700"><span className="font-medium">Location:</span> {shipment.location}</p>
-                        <div className="mt-4 bg-gray-50 p-3 rounded-lg text-sm">
-                            <p className="text-gray-600 font-medium">Post Office Info:</p>
-                            <p>{shipment.postOffice.name}</p>
-                            <p>{shipment.postOffice.address}, {shipment.postOffice.city}</p>
-                            <p>Postal Code: {shipment.postOffice.postalCode}</p>
-                        </div>
+                        <p className="text-gray-700"><span className="font-medium">Sending branch:</span> {shipment.sendOffice.name}</p>
+                        <p className="text-gray-700"><span className="font-medium">Receiving branch:</span> {shipment.receiveOffice.name}</p>
                     </div>
                 ))}
             </div>
