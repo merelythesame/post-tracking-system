@@ -38,6 +38,19 @@ class UserController extends AbstractController
         echo json_encode($user->jsonSerialize());
     }
 
+    public function getEntityByEmail(string $email): void
+    {
+        $user = $this->repository->findByEmail($email);
+        if (!$user) {
+            http_response_code(404);
+            echo json_encode(['message' => 'User not found']);
+            return;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($user->jsonSerialize());
+    }
+
     public function addEntity(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);

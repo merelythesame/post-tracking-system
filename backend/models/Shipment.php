@@ -8,11 +8,12 @@ class Shipment implements JsonSerializable
 {
     private ?int $id = null;
     private ?int $user_id = null;
+    private ?int $receiver_id = null;
     private ?string $receiverName = null;
+    private ?string $senderName = null;
     private ?string $address = null;
     private ?float $weight = null;
     private ?string $type = null;
-    private ?string $price = null;
     private ?string $created_at = null;
     private ?User $user = null;
 
@@ -87,16 +88,6 @@ class Shipment implements JsonSerializable
         $this->type = $type;
     }
 
-    public function getPrice(): ?string
-    {
-        return $this->price;
-    }
-
-    public function setPrice(?string $price): void
-    {
-        $this->price = $price;
-    }
-
     public function getCreatedAt(): ?string
     {
         return $this->created_at;
@@ -107,19 +98,42 @@ class Shipment implements JsonSerializable
         $this->created_at = $created_at;
     }
 
+    public function getReceiverId(): ?int
+    {
+        return $this->receiver_id;
+    }
+
+    public function setReceiverId(?int $receiver_id): void
+    {
+        $this->receiver_id = $receiver_id;
+    }
+
+    public function getSenderName(): ?string
+    {
+        return $this->senderName;
+    }
+
+    public function setSenderName(?string $senderName): void
+    {
+        $this->senderName = $senderName;
+    }
+
     public function jsonSerialize(): array
     {
         return [
             'id' => $this->getId(),
             'user_id' => $this->getUserId(),
             'receiverName' => $this->getReceiverName(),
+            'senderName' => $this->getSenderName(),
+            'receiver_id' => $this->getReceiverId(),
             'address' => $this->getAddress(),
             'weight' => $this->getWeight(),
             'type' => $this->getType(),
-            'price' => $this->getPrice(),
             'created_at' => $this->getCreatedAt(),
         ];
     }
+
+
 
 
 }

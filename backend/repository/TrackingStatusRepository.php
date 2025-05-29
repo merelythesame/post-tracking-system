@@ -29,14 +29,14 @@ class TrackingStatusRepository implements RepositoryInterface
         return $row ? $this->hydrateTrackingStatus($row) : null;
     }
 
-    public function save(object $entity): bool
+    public function save(object $entity): int
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
             INSERT INTO tracking_status (shipment_id, status, location, send_at, arrive_at, post_office_id)
             VALUES (?, ?, ?, ?, ?, ?)
         ");
-        return $stmt->execute([
+        $stmt->execute([
             $entity->getShipmentId(),
             $entity->getStatus(),
             $entity->getLocation(),
@@ -44,6 +44,8 @@ class TrackingStatusRepository implements RepositoryInterface
             $entity->getArriveAt(),
             $entity->getPostOfficeId()
         ]);
+
+        return (int) $pdo->lastInsertId();
     }
 
     public function update(object $entity, array $fields): bool

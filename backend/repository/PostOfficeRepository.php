@@ -30,19 +30,22 @@ class PostOfficeRepository implements RepositoryInterface
         return $row ? $this->hydratePostOffice($row) : null;
     }
 
-    public function save(object $entity): bool
+    public function save(object $entity): int
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
             INSERT INTO post_offices (name, address, city, postal_code)
             VALUES (?, ?, ?, ?)
         ");
-        return $stmt->execute([
+
+        $stmt->execute([
             $entity->getName(),
             $entity->getAddress(),
             $entity->getCity(),
             $entity->getPostalCode(),
         ]);
+
+        return (int) $pdo->lastInsertId();
     }
 
     public function update(object $entity, array $fields): bool
