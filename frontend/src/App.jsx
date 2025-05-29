@@ -9,6 +9,8 @@ import UserTracking from "./pages/UserPages/UserTracking.jsx";
 import UserPostOffices from "./pages/UserPages/UserPostOffices.jsx";
 import UserSupport from "./pages/UserPages/UserSupport.jsx";
 import UserEdit from "./pages/UserPages/UserEdit.jsx";
+import CreateShipment from "./pages/UserPages/CreateShipment.jsx";
+import UserReceiving from "./pages/UserPages/UserReceiving.jsx";
 
 function App() {
   return (
@@ -20,7 +22,9 @@ function App() {
                 path="/user"
                 element={<ProtectedRoute role="ROLE_USER"><UserLayout /></ProtectedRoute>}
             >
-                <Route path="shipments" element={<UserShipments />} />
+                <Route path="shipments" element={<UserShipments />}/>
+                <Route path="receiving" element={<UserReceiving />}/>
+                <Route path="shipments/create" element={<CreateShipment />} />
                 <Route path="tracking" element={<UserTracking />} />
                 <Route path="profile" element={<UserEdit />} />
                 <Route path="post-offices" element={<UserPostOffices />} />
