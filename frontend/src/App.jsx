@@ -6,7 +6,6 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import Register from "./pages/Register.jsx";
 import UserShipments from "./pages/UserPages/UserShipments.jsx";
 import UserTracking from "./pages/UserPages/UserTracking.jsx";
-import UserPostOffices from "./pages/UserPages/UserPostOffices.jsx";
 import UserSupport from "./pages/UserPages/UserSupport.jsx";
 import UserEdit from "./pages/UserPages/UserEdit.jsx";
 import CreateShipment from "./pages/UserPages/CreateShipment.jsx";
@@ -27,7 +26,6 @@ function App() {
                 <Route path="shipments/create" element={<CreateShipment />} />
                 <Route path="tracking" element={<UserTracking />} />
                 <Route path="profile" element={<UserEdit />} />
-                <Route path="post-offices" element={<UserPostOffices />} />
                 <Route path="support" element={<UserSupport />} />
             </Route>
           <Route
