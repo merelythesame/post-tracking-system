@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import ToggleInput from '../../components/ToggleInput.jsx';
+import ToggleInput from '../components/ToggleInput.jsx';
 import axios from "axios";
 import {toast, ToastContainer} from "react-toastify";
 
