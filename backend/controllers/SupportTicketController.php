@@ -59,6 +59,7 @@ class SupportTicketController extends AbstractController implements HasUserEntit
         $ticket->setUserId($data['user_id']);
         $ticket->setSubject($data['subject']);
         $ticket->setMessage($data['message']);
+        $ticket->setResponse($data['response']);
         $ticket->setStatus($data['status'] ?? 'open');
         $ticket->setCreatedAt(time());
 

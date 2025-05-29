@@ -123,8 +123,9 @@ export default function UserSupport() {
                             .filter((ticket) => ticket.user_id === userId)
                             .map((ticket) => (
                                 <li key={ticket.id} className="py-4">
-                                    <p className="font-medium text-gray-800">{ticket.subject}</p>
-                                    <p className="text-sm text-gray-600">{ticket.message}</p>
+                                    <p className="font-medium text-gray-800">Subject: {ticket.subject}</p>
+                                    <p className="text-sm text-gray-600">Request: {ticket.message}</p>
+                                    {ticket.response !== ''?<p className="text-sm text-gray-600">Response: {ticket.response}</p>:''}
                                     <p className="text-sm text-gray-400">
                                         Status:{' '}
                                         <span

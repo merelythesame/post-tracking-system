@@ -10,6 +10,7 @@ class SupportTicket implements JsonSerializable
     private ?int $user_id = null;
     private ?string $subject = null;
     private ?string $message = null;
+    private ?string $response = null;
     private ?string $status = null;
     private ?string $createdAt = null;
 
@@ -73,6 +74,16 @@ class SupportTicket implements JsonSerializable
         $this->createdAt = $createdAt;
     }
 
+    public function getResponse(): ?string
+    {
+        return $this->response;
+    }
+
+    public function setResponse(?string $response): void
+    {
+        $this->response = $response;
+    }
+
 
     public function jsonSerialize(): array
     {
@@ -81,6 +92,7 @@ class SupportTicket implements JsonSerializable
             'user_id' => $this->getUserId(),
             'subject' => $this->getSubject(),
             'message' => $this->getMessage(),
+            'response' => $this->getResponse(),
             'status' => $this->getStatus(),
             'createdAt' => $this->getCreatedAt(),
         ];

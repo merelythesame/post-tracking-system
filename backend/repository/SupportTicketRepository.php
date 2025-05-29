@@ -49,14 +49,15 @@ class SupportTicketRepository implements RepositoryInterface
     {
         $pdo = Database::getInstance();
         $stmt = $pdo->prepare("
-            INSERT INTO support_tickets (user_id, subject, message, status, created_at)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO support_tickets (user_id, subject, message, response, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
 
         $stmt->execute([
             $entity->getUserId(),
             $entity->getSubject(),
             $entity->getMessage(),
+            $entity->getResponse(),
             $entity->getStatus(),
             $entity->getCreatedAt(),
         ]);
@@ -98,6 +99,7 @@ class SupportTicketRepository implements RepositoryInterface
         $ticket->setUserId($row['user_id']);
         $ticket->setSubject($row['subject']);
         $ticket->setMessage($row['message']);
+        $ticket->setResponse($row['response']);
         $ticket->setStatus($row['status']);
         $ticket->setCreatedAt($row['created_at']);
 
