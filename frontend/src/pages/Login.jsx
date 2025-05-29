@@ -12,7 +12,7 @@ export default function Login() {
     const loginHandler = (event) => {
         event.preventDefault();
 
-        axios.post('http://localhost:8000/login', { email, password })
+        axios.post('http://localhost:8000/login', { email, password }, {withCredentials:true})
             .then(response => {
                 const user = {
                     id: response.data.id,
@@ -24,7 +24,7 @@ export default function Login() {
                 if (user.role === "ROLE_ADMIN") {
                     navigate("/admin");
                 } else {
-                    navigate("/user");
+                    navigate("/user/shipments");
                 }
 
                 toast.success(response.data.message);
