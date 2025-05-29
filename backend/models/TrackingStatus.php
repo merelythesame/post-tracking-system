@@ -81,7 +81,7 @@ class TrackingStatus implements JsonSerializable
             'status' => $this->getStatus(),
             'location' => $this->getLocation(),
             'sendAt' => $this->getSendAt(),
-            'arriveAt' => $this->getSendAt(),
+            'arriveAt' => $this->getArriveAt(),
         ];
     }
 
