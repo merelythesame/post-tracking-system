@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db:3306
--- Generation Time: May 29, 2025 at 10:30 PM
+-- Generation Time: May 31, 2025 at 12:23 PM
 -- Server version: 8.0.42
 -- PHP Version: 8.2.27
 
@@ -42,7 +42,7 @@ CREATE TABLE `post_offices` (
 INSERT INTO `post_offices` (`id`, `name`, `address`, `city`, `postal_code`) VALUES
 (1, 'Branch 12', 'Peremohy St, 12, Zhytomyr, Zhytomyrs\'ka oblast, 10001', 'Zhytomyr', '2000'),
 (2, 'Branch 1', 'Troianivska St, 10, Zhytomyr, Zhytomyrs\'ka oblast, 10001', 'Zhytomyr', '10001'),
-(3, 'Branch 3', 'Kyivska St, Zhytomyr, Zhytomyrs\'ka oblast, Ukraine, 10000', 'Kiev', '10000');
+(3, 'Branch 3', 'Kyivska St, Zhytomyr, Zhytomyrs\'ka oblast, Ukraine, 10000', 'Kiev', '10012');
 
 -- --------------------------------------------------------
 
@@ -56,7 +56,6 @@ CREATE TABLE `shipments` (
   `receiver_id` int DEFAULT NULL,
   `receiver_name` varchar(255) DEFAULT NULL,
   `sender_name` varchar(255) NOT NULL,
-  `address` text,
   `weight` float DEFAULT NULL,
   `type` varchar(50) DEFAULT NULL,
   `created_at` int DEFAULT NULL,
@@ -68,9 +67,10 @@ CREATE TABLE `shipments` (
 -- Dumping data for table `shipments`
 --
 
-INSERT INTO `shipments` (`id`, `user_id`, `receiver_id`, `receiver_name`, `sender_name`, `address`, `weight`, `type`, `created_at`, `send_office`, `receive_office`) VALUES
-(17, 9, 7, 'adadssad', '', 'asdadasd', 4, 'food', 1748524630, 1, 2),
-(18, 7, 9, 'adadssad', '', 'asdadasd', 6, 'toys', 1748524640, 2, 1);
+INSERT INTO `shipments` (`id`, `user_id`, `receiver_id`, `receiver_name`, `sender_name`, `weight`, `type`, `created_at`, `send_office`, `receive_office`) VALUES
+(17, 9, 7, 'adadssad', '', 4, 'food', 1748524630, 1, 2),
+(18, 7, 9, 'adadssad', '', 6, 'toys', 1748524640, 2, 1),
+(26, 7, 9, 'Someone', 'new Lester', 5, 'drink', 1748693532, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -93,7 +93,7 @@ CREATE TABLE `support_tickets` (
 --
 
 INSERT INTO `support_tickets` (`id`, `user_id`, `subject`, `message`, `response`, `status`, `created_at`) VALUES
-(1, 7, 'Bug', 'there are bug', 'resolved', 'closed', '1748256832'),
+(1, 7, 'Bug', 'there are bug', '', 'open', '1748256832'),
 (2, 7, 'another bug', 'It doesnt work again', '', 'open', '1748537822');
 
 -- --------------------------------------------------------
@@ -116,8 +116,9 @@ CREATE TABLE `tracking_status` (
 --
 
 INSERT INTO `tracking_status` (`id`, `shipment_id`, `status`, `location`, `send_at`, `arrive_at`) VALUES
-(6, 17, 'sent', '', NULL, NULL),
-(7, 18, 'sent', 'Zhytnii Rynok Square, Zhytomyr, Zhytomyrs\'ka oblast, Ukraine, 10000', '1748563200', '1748649600');
+(6, 17, 'sent', '', '1747267200', '1753920000'),
+(7, 18, 'sent', 'Zhytnii Rynok Square, Zhytomyr, Zhytomyrs\'ka oblast, Ukraine, 10000', '1748563200', '1748649600'),
+(13, 26, 'pending', '', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -140,7 +141,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `surname`, `email`, `password`, `phone_number`, `role`) VALUES
-(4, 'admin', 'user', 'user1@gmail.com', '$2y$12$N/H0gZkuscfvdL.FNW4dS.8p5nEousIffwI7JCeRpsolqUicVquhS', '+380645974556', 'ROLE_ADMIN'),
+(4, 'admin', 'user', 'user1@gmail.com', '$2y$12$N/H0gZkuscfvdL.FNW4dS.8p5nEousIffwI7JCeRpsolqUicVquhS', '+38064597430', 'ROLE_ADMIN'),
 (7, 'new', 'Lester', 'lester@example.com', '$2y$12$z1TMGo6mb7DsJWNqoW2.LuqwQtvnVet08IqXgfq.jP5seOmkrIOuO', '+380675125689', 'ROLE_USER'),
 (8, 'Masde', 'asd', 'lasd@example.com', '$2y$12$tLTQytz8b1pkBFZaMlSeXOLIo8fgIaStGaEP.0nwLYi06o96hCM46', '+380678562318', 'ROLE_USER'),
 (9, 'new', 'sdasdas', 'newUser@gmail.com', '$2y$12$56TvRRKsGhw5iV5coYwQBO8TIFepBSZ5DiXQxv2QcDUpT2z3LkSXC', '+380983393183', 'ROLE_USER');
@@ -194,31 +195,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `post_offices`
 --
 ALTER TABLE `post_offices`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `shipments`
 --
 ALTER TABLE `shipments`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `support_tickets`
 --
 ALTER TABLE `support_tickets`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tracking_status`
 --
 ALTER TABLE `tracking_status`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
