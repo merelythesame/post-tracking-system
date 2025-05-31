@@ -18,6 +18,7 @@
 - [📐 Programming Principles](#-programming-principles)
 - [🏗️ Design Patterns](#-design-patterns)
 - [🔧 Refactoring Techniques](#-refactoring-techniques)
+- [📄 Line of code](#-line-of-code)
 - [🎥 Demonstration](#-demonstration)
 
 ---
@@ -200,6 +201,10 @@ The security layer uses decorators to check session-based roles and permissions 
 
 
 ---
+
+## 📄 Line of code
+
+![lines](screenshots/lines.png)
 
 ## 🎥 Demonstration
 
