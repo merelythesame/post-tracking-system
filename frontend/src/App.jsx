@@ -1,43 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import axios from "axios";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import UserLayout from "./layouts/UserLayout";
+import AdminLayout from "./layouts/AdminLayout";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import Register from "./pages/Register.jsx";
+import UserShipments from "./pages/UserPages/UserShipments.jsx";
+import UserTracking from "./pages/UserPages/UserTracking.jsx";
+import UserSupport from "./pages/UserPages/UserSupport.jsx";
+import Profile from "./pages/Profile.jsx";
+import CreateShipment from "./pages/UserPages/CreateShipment.jsx";
+import UserReceiving from "./pages/UserPages/UserReceiving.jsx";
+import AdminTracking from "./pages/AdminPages/AdminTracking.jsx";
+import AdminUsers from "./pages/AdminPages/AdminUsers.jsx";
+import AdminTickets from "./pages/AdminPages/AdminTickets.jsx";
+import AdminPostOffices from "./pages/AdminPages/AdminPostOffices.jsx";
 
 function App() {
-    const [count, setCount] = useState(0);
-    const [rawData, setRawData] = useState(null);
-
-    const data = axios.get("/api");
-    data.then((response) => {
-        setRawData(response.data);
-    });
-
   return (
-    <>
-      <div>
-          <p>{rawData}</p>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <BrowserRouter>
+        <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+                path="/user"
+                element={<ProtectedRoute role="ROLE_USER"><UserLayout /></ProtectedRoute>}
+            >
+                <Route path="shipments" element={<UserShipments />}/>
+                <Route path="receiving" element={<UserReceiving />}/>
+                <Route path="shipments/create" element={<CreateShipment />} />
+                <Route path="tracking" element={<UserTracking />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="support" element={<UserSupport />} />
+            </Route>
+          <Route
+              path="/admin"
+              element={<ProtectedRoute role="ROLE_ADMIN"><AdminLayout /></ProtectedRoute>}
+          >
+              <Route path="tracking" element={<AdminTracking />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="tickets" element={<AdminTickets />} />
+              <Route path="post-offices" element={<AdminPostOffices />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
