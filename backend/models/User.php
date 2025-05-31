@@ -97,7 +97,7 @@ class User implements JsonSerializable
             'name' => $this->getName(),
             'surname' => $this->getSurname(),
             'email' => $this->getEmail(),
-            'phoneNumber' => $this->getPhoneNumber(),
+            'phone_number' => $this->getPhoneNumber(),
             'role' => $this->getRole(),
         ];
     }

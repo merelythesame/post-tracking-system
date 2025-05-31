@@ -11,14 +11,19 @@ export default function TrackingDetails({ shipment, trackingStatuses, postOffice
             <div className="bg-white p-4 rounded shadow mb-6">
                 <h2 className="text-xl font-bold mb-2">Tracking Details</h2>
                 <p>Status: {tracking?.status || 'Unknown'}</p>
-                {tracking?.location !== '' ?
+                {tracking?.send_at !== '' ?
                     <div>
                         <p>Send At: {unixToDatetimeLocal(tracking?.sendAt) || 'N/A'}</p>
+                    </div>
+                    : ''
+                }
+                {tracking?.arrive_at !== '' ?
+                    <div>
                         <p>Arrive At: {unixToDatetimeLocal(tracking?.arriveAt) || 'N/A'}</p>
                     </div>
                     : ''
                 }
-            </div>
+             </div>
             <div className="flex flex-wrap gap-6 items-start">
                 <div className="flex-1 min-w-[250px] bg-gray-50 p-3 rounded-lg text-sm">
                     <p className="text-gray-600 font-medium">Sending branch:</p>

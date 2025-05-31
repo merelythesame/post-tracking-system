@@ -45,7 +45,7 @@ class PostOfficeController extends AbstractController
         $office->setName($data['name']);
         $office->setAddress($data['address']);
         $office->setCity($data['city']);
-        $office->setPostalCode($data['postalCode']);
+        $office->setPostalCode($data['postal_code']);
 
         $this->repository->save($office);
         header('Content-Type: application/json');

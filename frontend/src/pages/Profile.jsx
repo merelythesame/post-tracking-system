@@ -75,7 +75,7 @@ export default function ProfilePage() {
                             <ToggleInput label="First Name" type="text" id="name" name="name" value={user.name} handle={handleChange} className="sm:col-span-3" />
                             <ToggleInput label="Last Name" type="text" id="surname" name="surname" value={user.surname} handle={handleChange} className="sm:col-span-3" />
                             <ToggleInput label="Email" type="email" id="email" name="email" value={user.email} handle={handleChange} className="sm:col-span-3" />
-                            <ToggleInput label="Phone Number" type="tel" id="phoneNumber" name="phoneNumber" value={user.phoneNumber} handle={handleChange} className="sm:col-span-3" />
+                            <ToggleInput label="Phone Number" type="tel" id="phone_number" name="phone_number" value={user.phone_number} handle={handleChange} className="sm:col-span-3" />
                             <ToggleInput label="Password" type="password" id="password" name="password" value={user.password} handle={handleChange} className="sm:col-span-3" />
                         </div>
                     </div>

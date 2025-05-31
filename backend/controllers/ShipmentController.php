@@ -54,14 +54,14 @@ class ShipmentController extends AbstractController implements HasUserEntitiesIn
         $data = json_decode(file_get_contents('php://input'), true);
         $shipment = new Shipment();
         $shipment->setUserId($data['user_id']);
-        $shipment->setReceiverName($data['receiverName']);
-        $shipment->setSenderName($data['senderName']);
-        $shipment->setReceiverId($data['receiverId'] ?? null);
+        $shipment->setReceiverName($data['receiver_name']);
+        $shipment->setSenderName($data['sender_name']);
+        $shipment->setReceiverId($data['receiver_id'] ?? null);
         $shipment->setWeight($data['weight']);
         $shipment->setType($data['type']);
         $shipment->setCreatedAt(time());
-        $shipment->setSendOffice($data['sendOffice']);
-        $shipment->setReceiveOffice($data['receiveOffice']);
+        $shipment->setSendOffice($data['send_office']);
+        $shipment->setReceiveOffice($data['receive_office']);
 
         $shipmentId = $this->repository->save($shipment);
         header('Content-Type: application/json');

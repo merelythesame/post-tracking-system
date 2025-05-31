@@ -66,9 +66,6 @@ class UserRepository implements RepositoryInterface
         $values = [];
 
         foreach ($fields as $key => $value) {
-            if($key == 'phoneNumber')
-                $key = 'phone_number';
-
             if ($key === 'password') {
                 if (!password_verify($value, $entity->getPassword())) {
                     $value = password_hash($value, PASSWORD_DEFAULT);

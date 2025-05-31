@@ -39,13 +39,12 @@ export default function CreateShipment() {
 
         const shipmentData = {
             user_id: userId,
-            receiverName: formData.receiverName,
-            senderName: user.name + ' ' + user.surname,
+            receiver_name: formData.receiverName,
+            sender_name: user.name + ' ' + user.surname,
             weight: formData.weight,
             type: formData.type,
-            sendOffice: formData.sendOffice,
-            receiveOffice: formData.receiveOffice,
-            created_at: Math.floor(Date.now() / 1000)
+            send_office: formData.sendOffice,
+            receive_office: formData.receiveOffice
         };
 
         try {
@@ -53,7 +52,7 @@ export default function CreateShipment() {
                 const receiverResponse = await axios.get(`http://localhost:8000/users/${formData.email}`, {
                     withCredentials: true
                 });
-                shipmentData.receiverId = receiverResponse.data.id;
+                shipmentData.receiver_id = receiverResponse.data.id;
             } catch (error) {
                 if (error.response && error.response.status === 404) {
                     toast.warn("Receiver not found. Proceeding without receiverId.");
@@ -69,7 +68,7 @@ export default function CreateShipment() {
             const shipmentId = shipmentResponse.data.id;
 
             await axios.post('http://localhost:8000/tracking-status', {
-                shipmentId: shipmentId,
+                shipment_id: shipmentId,
             }, { withCredentials: true });
 
             toast.success("Shipment and tracking created successfully!");

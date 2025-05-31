@@ -42,11 +42,11 @@ class TrackingStatusController extends AbstractController
         $data = json_decode(file_get_contents('php://input'), true);
         $trackingStatus = new TrackingStatus();
 
-        $trackingStatus->setShipmentId($data['shipmentId']);
+        $trackingStatus->setShipmentId($data['shipment_id']);
         $trackingStatus->setStatus($data['status'] ?? 'pending');
         $trackingStatus->setLocation($data['location'] ?? '');
-        $trackingStatus->setSendAt($data['sendAt'] ?? null);
-        $trackingStatus->setArriveAt($data['arriveAt'] ?? null);
+        $trackingStatus->setSendAt($data['send_at'] ?? null);
+        $trackingStatus->setArriveAt($data['arrive_at'] ?? null);
 
         $this->repository->save($trackingStatus);
 

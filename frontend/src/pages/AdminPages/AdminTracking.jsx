@@ -75,6 +75,8 @@ export default function AdminTracking() {
             setSendAt('');
             setArriveAt('');
             setStatus('');
+
+            toast.success('Shipment successfully updated');
         } catch (err) {
             toast.error('Failed to update tracking:', err);
         }
