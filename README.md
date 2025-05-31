@@ -1,6 +1,12 @@
 # 🚀 Post tracking system
 
 > Project consists of vanilla PHP api backend and React.js frontend
+>
+> ⚠️ **PHP API** is responsible for all core logic, where key principles, design patterns, and techniques have been applied.  
+> **React** is used only for the displaying and interacting with data, following a component-based principles.  
+>  
+> Feel free to refactor either part as needed. Good luck!
+
 
 ---
 
