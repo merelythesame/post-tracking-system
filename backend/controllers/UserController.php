@@ -1,6 +1,7 @@
 <?php
 
 namespace controllers;
+
 use config\Security;
 use http\Message;
 use models\User;
@@ -15,40 +16,29 @@ class UserController extends AbstractController
 
     public function getAllEntities(): void
     {
-        $data = [];
         $users = $this->repository->all();
-        header('Content-Type: application/json');
-        foreach ($users as $user) {
-            $data[] = $user->jsonSerialize();
-        }
-
-        echo json_encode($data);
+        $data = array_map(fn($user) => $user->jsonSerialize(), $users);
+        $this->jsonResponse($data);
     }
 
     public function getEntityById(int $id): void
     {
         $user = $this->repository->find($id);
         if (!$user) {
-            http_response_code(404);
-            echo json_encode(['message' => 'User not found']);
+            $this->jsonResponse(['error' => 'User not found'], 404);
             return;
         }
-
-        header('Content-Type: application/json');
-        echo json_encode($user->jsonSerialize());
+        $this->jsonResponse($user->jsonSerialize());
     }
 
     public function getEntityByEmail(string $email): void
     {
         $user = $this->repository->findByEmail($email);
         if (!$user) {
-            http_response_code(404);
-            echo json_encode(['message' => 'User not found']);
+            $this->jsonResponse(['error' => 'User not found'], 404);
             return;
         }
-
-        header('Content-Type: application/json');
-        echo json_encode($user->jsonSerialize());
+        $this->jsonResponse($user->jsonSerialize());
     }
 
     public function addEntity(): void
@@ -62,9 +52,7 @@ class UserController extends AbstractController
         $user->setPhoneNumber($data['phoneNumber']);
 
         $this->repository->save($user);
-        header('Content-Type: application/json');
-        http_response_code(201);
-        echo json_encode(['message' => 'User created']);
+        $this->jsonResponse(['message' => 'User created'], 201);
     }
 
     public function updateEntity(int $id): void
@@ -73,15 +61,15 @@ class UserController extends AbstractController
         $user = $this->repository->find($id);
 
         if (!$user) {
-            http_response_code(404);
-            echo json_encode(['message' => 'User not found']);
+            $this->jsonResponse(['error' => 'User not found'], 404);
             return;
         }
 
         $success = $this->repository->update($user, $data);
-        header('Content-Type: application/json');
-        http_response_code($success ? 200 : 400);
-        echo json_encode(['message' => $success ? 'User updated' : 'Update failed']);
+        $this->jsonResponse(
+            ['message' => $success ? 'User updated' : 'Update failed'],
+            $success ? 200 : 400
+        );
     }
 
     public function deleteEntity(int $id): void
@@ -89,44 +77,46 @@ class UserController extends AbstractController
         $user = $this->repository->find($id);
 
         if (!$user) {
-            http_response_code(404);
-            echo json_encode(['message' => 'User not found']);
+            $this->jsonResponse(['error' => 'User not found'], 404);
             return;
         }
 
         $this->repository->delete($user);
-        header('Content-Type: application/json');
-        http_response_code(202);
-        echo json_encode(['message' => 'User deleted']);
+        $this->jsonResponse(['message' => 'User deleted'], 202);
     }
 
     public function login(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
         if (!is_array($data)) {
-            http_response_code(400);
-            echo json_encode(['Error' => 'Invalid input']);
+            $this->jsonResponse(['error' => 'Invalid input'], 400);
             return;
         }
 
         $user = $this->repository->findByEmail($data['email']);
         if (!$user || !password_verify($data['password'], $user->getPassword())) {
-            http_response_code(401);
-            echo json_encode(['Error' => 'Invalid credentials']);
+            $this->jsonResponse(['error' => 'Invalid credentials'], 401);
             return;
         }
 
         Security::setUser($user);
-        header('Content-Type: application/json');
-        http_response_code(200);
-        echo json_encode(['message' => 'Successfully logged in', 'id' => $user->getId(), 'role' => $user->getRole()]);
+        $this->jsonResponse([
+            'message' => 'Successfully logged in',
+            'id' => $user->getId(),
+            'role' => $user->getRole()
+        ]);
     }
 
     public function logout(): void
     {
         Security::logout();
-        header('Content-Type: application/json');
-        echo json_encode(['message' => 'Logged out successfully.']);
+        $this->jsonResponse(['message' => 'Logged out successfully']);
     }
 
+    private function jsonResponse(array $data, int $statusCode = 200): void
+    {
+        header('Content-Type: application/json');
+        http_response_code($statusCode);
+        echo json_encode($data);
+    }
 }
