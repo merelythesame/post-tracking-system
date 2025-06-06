@@ -16,37 +16,35 @@ class ShipmentController extends AbstractController implements HasUserEntitiesIn
     {
         $data = [];
         $shipments = $this->repository->all();
-        header('Content-Type: application/json');
+
         foreach ($shipments as $shipment) {
             $data[] = $shipment->jsonSerialize();
         }
 
-        echo json_encode($data);
+        $this->jsonResponse($data);
     }
 
     public function getEntityByUser(int $id): void
     {
         $data = [];
         $shipments = $this->repository->findByUserId($id);
-        header('Content-Type: application/json');
+
         foreach ($shipments as $shipment) {
             $data[] = $shipment->jsonSerialize();
         }
 
-        echo json_encode($data);
+        $this->jsonResponse($data);
     }
 
     public function getEntityById(int $id): void
     {
         $shipment = $this->repository->find($id);
         if (!$shipment) {
-            http_response_code(404);
-            echo json_encode(['message' => 'Shipment not found']);
+            $this->notFoundResponse('Shipment');
             return;
         }
 
-        header('Content-Type: application/json');
-        echo json_encode($shipment->jsonSerialize());
+        $this->jsonResponse($shipment->jsonSerialize());
     }
 
     public function addEntity(): void
@@ -64,9 +62,7 @@ class ShipmentController extends AbstractController implements HasUserEntitiesIn
         $shipment->setReceiveOffice($data['receive_office']);
 
         $shipmentId = $this->repository->save($shipment);
-        header('Content-Type: application/json');
-        http_response_code(201);
-        echo json_encode(['message' => 'Shipment created', 'id' => $shipmentId]);
+        $this->createdResponse('Shipment', $shipmentId);
     }
 
     public function updateEntity(int $id): void
@@ -75,15 +71,12 @@ class ShipmentController extends AbstractController implements HasUserEntitiesIn
         $shipment = $this->repository->find($id);
 
         if (!$shipment) {
-            http_response_code(404);
-            echo json_encode(['message' => 'Shipment not found']);
+            $this->notFoundResponse('Shipment');
             return;
         }
 
         $success = $this->repository->update($shipment, $data);
-        header('Content-Type: application/json');
-        http_response_code($success ? 200 : 400);
-        echo json_encode(['message' => $success ? 'Shipment updated' : 'Update failed']);
+        $this->updateResponse('Shipment', $success);
     }
 
     public function deleteEntity(int $id): void
@@ -91,15 +84,11 @@ class ShipmentController extends AbstractController implements HasUserEntitiesIn
         $shipment = $this->repository->find($id);
 
         if (!$shipment) {
-            http_response_code(404);
-            echo json_encode(['message' => 'Shipment not found']);
+            $this->notFoundResponse('Shipment');
             return;
         }
 
         $this->repository->delete($shipment);
-        header('Content-Type: application/json');
-        http_response_code(202);
-        echo json_encode(['message' => 'Shipment deleted']);
+        $this->deleteResponse('Shipment');
     }
-
 }

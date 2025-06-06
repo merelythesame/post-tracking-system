@@ -17,12 +17,11 @@ class SupportTicketController extends AbstractController implements HasUserEntit
         $data = [];
         $tickets = $this->repository->all();
 
-        header('Content-Type: application/json');
         foreach ($tickets as $ticket) {
             $data[] = $ticket->jsonSerialize();
         }
 
-        echo json_encode($data);
+        $this->jsonResponse($data);
     }
 
     public function getEntityById(int $id): void
@@ -30,13 +29,11 @@ class SupportTicketController extends AbstractController implements HasUserEntit
         $ticket = $this->repository->find($id);
 
         if (!$ticket) {
-            http_response_code(404);
-            echo json_encode(['message' => 'Ticket not found']);
+            $this->notFoundResponse('Ticket');
             return;
         }
 
-        header('Content-Type: application/json');
-        echo json_encode($ticket->jsonSerialize());
+        $this->jsonResponse($ticket->jsonSerialize());
     }
 
     public function getEntityByUser(int $id): void
@@ -44,12 +41,11 @@ class SupportTicketController extends AbstractController implements HasUserEntit
         $data = [];
         $tickets = $this->repository->findByUserId($id);
 
-        header('Content-Type: application/json');
         foreach ($tickets as $ticket) {
             $data[] = $ticket->jsonSerialize();
         }
 
-        echo json_encode($data);
+        $this->jsonResponse($data);
     }
 
     public function addEntity(): void
@@ -64,9 +60,7 @@ class SupportTicketController extends AbstractController implements HasUserEntit
         $ticket->setCreatedAt(time());
 
         $this->repository->save($ticket);
-        header('Content-Type: application/json');
-        http_response_code(201);
-        echo json_encode(['message' => 'Support ticket created']);
+        $this->createdResponse('Support ticket');
     }
 
     public function updateEntity(int $id): void
@@ -74,17 +68,14 @@ class SupportTicketController extends AbstractController implements HasUserEntit
         $ticket = $this->repository->find($id);
 
         if (!$ticket) {
-            http_response_code(404);
-            echo json_encode(['message' => 'Ticket not found']);
+            $this->notFoundResponse('Ticket');
             return;
         }
 
         $data = json_decode(file_get_contents('php://input'), true);
         $success = $this->repository->update($ticket, $data);
 
-        header('Content-Type: application/json');
-        http_response_code($success ? 200 : 400);
-        echo json_encode(['message' => $success ? 'Ticket updated' : 'Update failed']);
+        $this->updateResponse('Ticket', $success);
     }
 
     public function deleteEntity(int $id): void
@@ -92,15 +83,11 @@ class SupportTicketController extends AbstractController implements HasUserEntit
         $ticket = $this->repository->find($id);
 
         if (!$ticket) {
-            http_response_code(404);
-            echo json_encode(['message' => 'Ticket not found']);
+            $this->notFoundResponse('Ticket');
             return;
         }
 
         $this->repository->delete($ticket);
-        header('Content-Type: application/json');
-        http_response_code(202);
-        echo json_encode(['message' => 'Ticket deleted']);
+        $this->deleteResponse('Ticket');
     }
-
 }

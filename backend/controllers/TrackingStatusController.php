@@ -16,25 +16,23 @@ class TrackingStatusController extends AbstractController
     {
         $data = [];
         $trackingStatuses = $this->repository->all();
-        header('Content-Type: application/json');
+
         foreach ($trackingStatuses as $trackingStatus) {
             $data[] = $trackingStatus->jsonSerialize();
         }
 
-        echo json_encode($data);
+        $this->jsonResponse($data);
     }
 
     public function getEntityById(int $id): void
     {
         $trackingStatus = $this->repository->find($id);
         if (!$trackingStatus) {
-            http_response_code(404);
-            echo json_encode(['message' => 'Tracking status not found']);
+            $this->notFoundResponse('Tracking status');
             return;
         }
 
-        header('Content-Type: application/json');
-        echo json_encode($trackingStatus->jsonSerialize());
+        $this->jsonResponse($trackingStatus->jsonSerialize());
     }
 
     public function addEntity(): void
@@ -50,11 +48,8 @@ class TrackingStatusController extends AbstractController
 
         $this->repository->save($trackingStatus);
 
-        header('Content-Type: application/json');
-        http_response_code(201);
-        echo json_encode(['message' => 'Tracking status created']);
+        $this->createdResponse('Tracking status');
     }
-
 
     public function updateEntity(int $id): void
     {
@@ -62,15 +57,12 @@ class TrackingStatusController extends AbstractController
         $trackingStatus = $this->repository->find($id);
 
         if (!$trackingStatus) {
-            http_response_code(404);
-            echo json_encode(['message' => 'Tracking status not found']);
+            $this->notFoundResponse('Tracking status');
             return;
         }
 
         $success = $this->repository->update($trackingStatus, $data);
-        header('Content-Type: application/json');
-        http_response_code($success ? 200 : 400);
-        echo json_encode(['message' => $success ? 'Tracking status updated' : 'Update failed']);
+        $this->updateResponse('Tracking status', $success);
     }
 
     public function deleteEntity(int $id): void
@@ -78,15 +70,11 @@ class TrackingStatusController extends AbstractController
         $trackingStatus = $this->repository->find($id);
 
         if (!$trackingStatus) {
-            http_response_code(404);
-            echo json_encode(['message' => 'Tracking status not found']);
+            $this->notFoundResponse('Tracking status');
             return;
         }
 
         $this->repository->delete($trackingStatus);
-        header('Content-Type: application/json');
-        http_response_code(202);
-        echo json_encode(['message' => 'Tracking status deleted']);
+        $this->deleteResponse('Tracking status');
     }
-
 }
