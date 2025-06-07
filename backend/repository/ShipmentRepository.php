@@ -2,53 +2,36 @@
 
 namespace repository;
 
-use config\Database;
-use models\Shipment;
 use PDO;
+use models\Shipment;
 
-class ShipmentRepository implements RepositoryInterface
+class ShipmentRepository extends AbstractRepository implements RepositoryInterface
 {
-    public function all(): array
+    public function __construct(PDO $pdo)
     {
-        $pdo = Database::getInstance();
-        $stmt = $pdo->query("SELECT * FROM shipments");
-
-        $shipments = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $shipments[] = $this->hydrateShipment($row);
-        }
-        return $shipments;
-    }
-
-    public function find(int $id): ?Shipment
-    {
-        $pdo = Database::getInstance();
-        $stmt = $pdo->prepare("SELECT * FROM shipments WHERE id = ?");
-        $stmt->execute([$id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $row ? $this->hydrateShipment($row) : null;
+        parent::__construct($pdo, Shipment::class, 'shipments');
     }
 
     public function findByUserId(int $userId): array
     {
-        $pdo = Database::getInstance();
-        $stmt = $pdo->prepare("SELECT * FROM shipments WHERE user_id = ? OR receiver_id = ?");
+        $stmt = $this->pdo->prepare("
+            SELECT * FROM {$this->tableName}
+            WHERE user_id = ? OR receiver_id = ?
+        ");
         $stmt->execute([$userId, $userId]);
 
-        $shipments = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $shipments[] = $this->hydrateShipment($row);
-        }
-        return $shipments;
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($r) => $this->hydrate($r), $rows);
     }
 
     public function save(object $entity): int
     {
-        $pdo = Database::getInstance();
-        $stmt = $pdo->prepare("
-        INSERT INTO shipments (user_id, receiver_id, receiver_name, sender_name, weight, type, created_at, send_office, receive_office)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ");
+        $stmt = $this->pdo->prepare("
+            INSERT INTO {$this->tableName}
+              (user_id, receiver_id, receiver_name, sender_name,
+               weight, type, created_at, send_office, receive_office)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
 
         $stmt->execute([
             $entity->getUserId(),
@@ -59,55 +42,42 @@ class ShipmentRepository implements RepositoryInterface
             $entity->getType(),
             time(),
             $entity->getSendOffice(),
-            $entity->getReceiveOffice()
+            $entity->getReceiveOffice(),
         ]);
 
-        return (int) $pdo->lastInsertId();
+        return (int)$this->pdo->lastInsertId();
     }
 
     public function update(object $entity, array $fields): bool
     {
-        $pdo = Database::getInstance();
-
-        $setClauses = [];
-        $values = [];
-
-        foreach ($fields as $key => $value) {
-            $setClauses[] = "$key = ?";
-            $values[] = $value;
+        if (empty($fields)) {
+            return false;
         }
 
-        if (empty($setClauses)) return false;
+        $setClauses = array_map(fn($k) => "$k = ?", array_keys($fields));
+        $values     = array_values($fields);
+        $values[]   = $entity->getId();
 
-        $values[] = $entity->getId();
+        $sql  = "UPDATE {$this->tableName} SET " . implode(', ', $setClauses) . " WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
 
-        $sql = "UPDATE shipments SET " . implode(', ', $setClauses) . " WHERE id = ?";
-        $stmt = $pdo->prepare($sql);
         return $stmt->execute($values);
     }
 
-    public function delete(object $entity): bool
+    protected function hydrate(array $row): object
     {
-        $pdo = Database::getInstance();
-        $stmt = $pdo->prepare("DELETE FROM shipments WHERE id = ?");
-        return $stmt->execute([$entity->getId()]);
+        $s = new Shipment();
+        $s->setId((int)$row['id']);
+        $s->setUserId((int)$row['user_id']);
+        $s->setReceiverId((int)$row['receiver_id']);
+        $s->setReceiverName($row['receiver_name']);
+        $s->setSenderName($row['sender_name']);
+        $s->setWeight((float)$row['weight']);
+        $s->setType($row['type']);
+        $s->setCreatedAt((int)$row['created_at']);
+        $s->setSendOffice((int)$row['send_office']);
+        $s->setReceiveOffice((int)$row['receive_office']);
+
+        return $s;
     }
-
-    private function hydrateShipment(array $row): Shipment
-    {
-        $shipment = new Shipment();
-        $shipment->setId($row["id"]);
-        $shipment->setUserId($row["user_id"]);
-        $shipment->setReceiverName($row["receiver_name"]);
-        $shipment->setSenderName($row["sender_name"]);
-        $shipment->setReceiverId($row["receiver_id"]);
-        $shipment->setWeight($row["weight"]);
-        $shipment->setType($row["type"]);
-        $shipment->setCreatedAt($row["created_at"]);
-        $shipment->setSendOffice($row["send_office"]);
-        $shipment->setReceiveOffice($row["receive_office"]);
-
-        return $shipment;
-    }
-
 }
