@@ -63,6 +63,15 @@ services:
     ports:
       - "6060:6060"
     restart: unless-stopped
+  
+  storybook:
+    build:
+      context: .
+      dockerfile: docker/storybook/Dockerfile
+    container_name: storybook-server
+    ports:
+      - "6007:6007"
+    restart: unless-stopped
 
 volumes:
   mysql:
