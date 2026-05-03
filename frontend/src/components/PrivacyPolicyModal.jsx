@@ -1,3 +1,15 @@
+/** @module PrivacyPolicyModal */
+/**
+ * Modal overlay displaying the Privacy Policy content.
+ * Rendered on top of the cookie consent banner when the user
+ * clicks the "Privacy Policy" link.
+ *
+ * @component
+ * @param {Object} props
+ * @param {function(): void} props.onClose - Callback to close the modal
+ * @returns {JSX.Element}
+ */
+
 export default function PrivacyPolicyModal({ onClose }) {
   return (
     <div style={{

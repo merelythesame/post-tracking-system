@@ -54,6 +54,15 @@ services:
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
+  
+  docs:
+    build:
+      context: .
+      dockerfile: docker/docs/Dockerfile
+    container_name: docs-server
+    ports:
+      - "6060:6060"
+    restart: unless-stopped
 
 volumes:
   mysql:

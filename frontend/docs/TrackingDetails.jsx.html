@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>TrackingDetails.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-CookieConsentBanner.html">CookieConsentBanner</a></li><li><a href="module-PrivacyPolicyModal.html">PrivacyPolicyModal</a></li><li><a href="module-ShipmentSelector.html">ShipmentSelector</a></li><li><a href="module-ToggleInput.html">ToggleInput</a></li><li><a href="module-TrackingDetails.html">TrackingDetails</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">TrackingDetails.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import {unixToDatetimeLocal} from "./dateConvertors.js";
+
+/** @module TrackingDetails */
+/**
+ * @typedef {Object} Shipment
+ * @property {number} id - Unique shipment identifier
+ * @property {number} sendOffice - ID of the post office that sends the shipment
+ * @property {number} receiveOffice - ID of the post office that receives the shipment
+ */
+
+/**
+ * @typedef {Object} TrackingStatus
+ * @property {number} shipment_id - ID of the associated shipment
+ * @property {string} status - Current status of the shipment (e.g. "In Transit", "Delivered")
+ * @property {string} location - Current physical location of the shipment
+ * @property {number|string} sendAt - Unix timestamp of when the shipment was sent
+ * @property {number|string} arriveAt - Unix timestamp of when the shipment arrived
+ * @property {string} send_at - Raw send date string (used for empty check)
+ * @property {string} arrive_at - Raw arrive date string (used for empty check)
+ */
+
+/**
+ * @typedef {Object} PostOffice
+ * @property {number} id - Unique post office identifier
+ * @property {string} name - Name of the post office
+ * @property {string} address - Street address of the post office
+ * @property {string} city - City where the post office is located
+ * @property {string} postalCode - Postal code of the post office
+ */
+
+/**
+ * Displays full tracking details for a given shipment, including
+ * current status, send/arrive timestamps, sending branch,
+ * current location, and receiving branch information.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Shipment} props.shipment - The shipment to display tracking info for
+ * @param {TrackingStatus[]} props.trackingStatuses - List of all tracking statuses
+ * @param {PostOffice[]} props.postOffices - List of all post offices
+ * @returns {JSX.Element}
+ *
+ * @example
+ * &lt;TrackingDetails
+ *   shipment={{ id: 1, sendOffice: 2, receiveOffice: 5 }}
+ *   trackingStatuses={[
+ *     { shipment_id: 1, status: "In Transit", location: "Kyiv Hub",
+ *       sendAt: 1710000000, arriveAt: 1710100000,
+ *       send_at: "2024-03-10", arrive_at: "2024-03-11" }
+ *   ]}
+ *   postOffices={[
+ *     { id: 2, name: "Kyiv Central", address: "Khreshchatyk 1", city: "Kyiv", postalCode: "01001" },
+ *     { id: 5, name: "Lviv Main", address: "Rynok Square 5", city: "Lviv", postalCode: "79000" }
+ *   ]}
+ * />
+ */
+
+export default function TrackingDetails({ shipment, trackingStatuses, postOffices }) {
+    const tracking = trackingStatuses.find(t => t.shipment_id === shipment.id);
+    const sendOffice = postOffices.find(p => p.id === shipment.sendOffice);
+    const receiveOffice = postOffices.find(p => p.id === shipment.receiveOffice);
+
+    return (
+        &lt;>
+            &lt;div className="bg-white p-4 rounded shadow mb-6">
+                &lt;h2 className="text-xl font-bold mb-2">Tracking Details&lt;/h2>
+                &lt;p>Status: {tracking?.status || 'Unknown'}&lt;/p>
+                {tracking?.send_at !== '' ?
+                    &lt;div>
+                        &lt;p>Send At: {unixToDatetimeLocal(tracking?.sendAt) || 'N/A'}&lt;/p>
+                    &lt;/div>
+                    : ''
+                }
+                {tracking?.arrive_at !== '' ?
+                    &lt;div>
+                        &lt;p>Arrive At: {unixToDatetimeLocal(tracking?.arriveAt) || 'N/A'}&lt;/p>
+                    &lt;/div>
+                    : ''
+                }
+             &lt;/div>
+            &lt;div className="flex flex-wrap gap-6 items-start">
+                &lt;div className="flex-1 min-w-[250px] bg-gray-50 p-3 rounded-lg text-sm">
+                    &lt;p className="text-gray-600 font-medium">Sending branch:&lt;/p>
+                    &lt;p>{sendOffice?.name || 'Unknown'}&lt;/p>
+                    &lt;p>{sendOffice?.address || 'Unknown'}&lt;/p>
+                    &lt;p>{sendOffice?.city || 'Unknown'}&lt;/p>
+                    &lt;p>Postal Code: {sendOffice?.postalCode || 'Unknown'}&lt;/p>
+                &lt;/div>
+
+                &lt;div className="flex-1 min-w-[250px] bg-gray-50 p-3 rounded-lg text-sm">
+                    &lt;p className="text-gray-600 font-medium">Current location:&lt;/p>
+                    &lt;p>{tracking?.location || 'Unsent'}&lt;/p>
+                &lt;/div>
+
+                &lt;div className="flex-1 min-w-[250px] bg-gray-50 p-3 rounded-lg text-sm">
+                    &lt;p className="text-gray-600 font-medium">Receiving branch:&lt;/p>
+                    &lt;p>{receiveOffice?.name || 'Unknown'}&lt;/p>
+                    &lt;p>{receiveOffice?.address || 'Unknown'}&lt;/p>
+                    &lt;p>{receiveOffice?.city || 'Unknown'}&lt;/p>
+                    &lt;p>Postal Code: {receiveOffice?.postalCode || 'Unknown'}&lt;/p>
+                &lt;/div>
+            &lt;/div>
+
+        &lt;/>
+    );
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

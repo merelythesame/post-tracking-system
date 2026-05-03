@@ -2,6 +2,16 @@ import { useState } from "react";
 import CookieConsent from "react-cookie-consent";
 import PrivacyPolicyModal from "./PrivacyPolicyModal";
 
+/** @module CookieConsentBanner */
+/**
+ * GDPR-compliant cookie consent banner displayed at the bottom of the page.
+ * Uses react-cookie-consent to manage consent state via cookies.
+ * Includes a link that opens the PrivacyPolicyModal without leaving the page.
+ *
+ * @component
+ * @returns {JSX.Element}
+ */
+
 export default function CookieConsentBanner() {
   const [showPolicy, setShowPolicy] = useState(false);
 

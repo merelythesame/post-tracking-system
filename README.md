@@ -115,6 +115,7 @@ You should see **four containers** with status `Up`:
 - `php-backend`
 - `react-frontend`
 - `mysql-db`
+- `docs-server`
 - `pma` (phpMyAdmin)
 
 ---
@@ -140,6 +141,7 @@ You should now see all required tables.
 - 🔗 **Frontend (React UI)**: [http://localhost:5137](http://localhost:5137)
 - 🔗 **phpMyAdmin (DB UI)**: [http://localhost:8080](http://localhost:8080)
 - 🔗 **Backend (PHP API)**: [http://localhost:8000](http://localhost:8000)
+- 🔗 **JS docs**: [http://localhost:6060](http://localhost:6060)
 
 > 🧪 You can test API routes using Postman or any HTTP client. **Here is documentation [https://documenter.getpostman.com/view/41681143/2sB2qgdxhQ](https://documenter.getpostman.com/view/41681143/2sB2qgdxhQ)**
 

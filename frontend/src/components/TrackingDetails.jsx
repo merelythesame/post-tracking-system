@@ -1,6 +1,61 @@
 import React from 'react';
 import {unixToDatetimeLocal} from "./dateConvertors.js";
 
+/** @module TrackingDetails */
+/**
+ * @typedef {Object} Shipment
+ * @property {number} id - Unique shipment identifier
+ * @property {number} sendOffice - ID of the post office that sends the shipment
+ * @property {number} receiveOffice - ID of the post office that receives the shipment
+ */
+
+/**
+ * @typedef {Object} TrackingStatus
+ * @property {number} shipment_id - ID of the associated shipment
+ * @property {string} status - Current status of the shipment (e.g. "In Transit", "Delivered")
+ * @property {string} location - Current physical location of the shipment
+ * @property {number|string} sendAt - Unix timestamp of when the shipment was sent
+ * @property {number|string} arriveAt - Unix timestamp of when the shipment arrived
+ * @property {string} send_at - Raw send date string (used for empty check)
+ * @property {string} arrive_at - Raw arrive date string (used for empty check)
+ */
+
+/**
+ * @typedef {Object} PostOffice
+ * @property {number} id - Unique post office identifier
+ * @property {string} name - Name of the post office
+ * @property {string} address - Street address of the post office
+ * @property {string} city - City where the post office is located
+ * @property {string} postalCode - Postal code of the post office
+ */
+
+/**
+ * Displays full tracking details for a given shipment, including
+ * current status, send/arrive timestamps, sending branch,
+ * current location, and receiving branch information.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Shipment} props.shipment - The shipment to display tracking info for
+ * @param {TrackingStatus[]} props.trackingStatuses - List of all tracking statuses
+ * @param {PostOffice[]} props.postOffices - List of all post offices
+ * @returns {JSX.Element}
+ *
+ * @example
+ * <TrackingDetails
+ *   shipment={{ id: 1, sendOffice: 2, receiveOffice: 5 }}
+ *   trackingStatuses={[
+ *     { shipment_id: 1, status: "In Transit", location: "Kyiv Hub",
+ *       sendAt: 1710000000, arriveAt: 1710100000,
+ *       send_at: "2024-03-10", arrive_at: "2024-03-11" }
+ *   ]}
+ *   postOffices={[
+ *     { id: 2, name: "Kyiv Central", address: "Khreshchatyk 1", city: "Kyiv", postalCode: "01001" },
+ *     { id: 5, name: "Lviv Main", address: "Rynok Square 5", city: "Lviv", postalCode: "79000" }
+ *   ]}
+ * />
+ */
+
 export default function TrackingDetails({ shipment, trackingStatuses, postOffices }) {
     const tracking = trackingStatuses.find(t => t.shipment_id === shipment.id);
     const sendOffice = postOffices.find(p => p.id === shipment.sendOffice);

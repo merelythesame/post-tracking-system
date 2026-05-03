@@ -1,0 +1,22 @@
+{
+  "source": {
+    "include": ["src/components"],
+    "includePattern": ".+\\.jsx?$"
+  },
+  "opts": {
+    "destination": "docs",
+    "recurse": true,
+    "template": "node_modules/docdash"
+  },
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "default": {
+      "includeDate": false,
+      "outputSourceFiles": true
+    }
+  },
+  "docdash": {
+    "static": true,
+    "sort": true
+  }
+}
