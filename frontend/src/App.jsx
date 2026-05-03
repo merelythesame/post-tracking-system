@@ -14,6 +14,7 @@ import AdminTracking from "./pages/AdminPages/AdminTracking.jsx";
 import AdminUsers from "./pages/AdminPages/AdminUsers.jsx";
 import AdminTickets from "./pages/AdminPages/AdminTickets.jsx";
 import AdminPostOffices from "./pages/AdminPages/AdminPostOffices.jsx";
+import CookieConsent from "./components/CookieConsent";
 
 function App() {
   return (
@@ -42,7 +43,8 @@ function App() {
               <Route path="tickets" element={<AdminTickets />} />
               <Route path="post-offices" element={<AdminPostOffices />} />
           </Route>
-        </Routes>
+          </Routes>
+          <CookieConsent />
       </BrowserRouter>
   );
 }
