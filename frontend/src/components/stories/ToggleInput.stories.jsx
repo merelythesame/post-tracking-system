@@ -1,0 +1,92 @@
+import { useState } from 'react';
+import ToggleInput from '../ToggleInput';
+
+function LoginStyleWrapper({ fields }) {
+  const [values, setValues] = useState(
+    Object.fromEntries(fields.map(f => [f.name, f.value]))
+  );
+
+  return (
+    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <img
+          alt="Your Company"
+          src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+          className="mx-auto h-10 w-auto"
+        />
+        <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+          Edit your profile
+        </h2>
+      </div>
+
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm space-y-6">
+        {fields.map((field) => (
+          <ToggleInput
+            key={field.id}
+            label={field.label}
+            value={values[field.name]}
+            type={field.type}
+            id={field.id}
+            name={field.name}
+            handle={(e) => setValues(prev => ({ ...prev, [field.name]: e.target.value }))}
+            className="w-full"
+          />
+        ))}
+
+        <button
+          type="button"
+          className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          Save changes
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default {
+  title: 'Complex/ToggleInput',
+  component: ToggleInput,
+  argTypes: {
+    label: { control: 'text' },
+    value: { control: 'text' },
+    type: {
+      control: 'select',
+      options: ['text', 'email', 'password', 'number'],
+    },
+  },
+};
+
+export const TextField = {
+  render: () => (
+    <LoginStyleWrapper fields={[
+      { label: 'Full Name', value: 'John Doe', type: 'text', id: 'name', name: 'name' },
+    ]} />
+  ),
+};
+
+export const EmailField = {
+  render: () => (
+    <LoginStyleWrapper fields={[
+      { label: 'Email', value: 'john@example.com', type: 'email', id: 'email', name: 'email' },
+    ]} />
+  ),
+};
+
+export const PasswordField = {
+  render: () => (
+    <LoginStyleWrapper fields={[
+      { label: 'Password', value: 'secret123', type: 'password', id: 'password', name: 'password' },
+    ]} />
+  ),
+};
+
+export const AllFields = {
+  render: () => (
+    <LoginStyleWrapper fields={[
+      { label: 'Full Name',  value: 'John Doe',          type: 'text',     id: 'name',     name: 'name' },
+      { label: 'Email',      value: 'john@example.com',  type: 'email',    id: 'email',    name: 'email' },
+      { label: 'Password',   value: 'secret123',         type: 'password', id: 'password', name: 'password' },
+    ]} />
+  ),
+};
