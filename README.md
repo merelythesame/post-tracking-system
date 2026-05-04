@@ -145,7 +145,9 @@ You should now see all required tables.
 - 🔗 **JS docs**: [http://localhost:6060](http://localhost:6060)
 - 🔗 **Storybook**: [http://localhost:6007](http://localhost:6007)
 
-> 🧪 You can test API routes using Postman or any HTTP client. **Here is documentation [https://documenter.getpostman.com/view/41681143/2sB2qgdxhQ](https://documenter.getpostman.com/view/41681143/2sB2qgdxhQ)**
+### 🧪 Postman documentation 
+
+> You can test API routes using Postman or any HTTP client. **Here is documentation [https://documenter.getpostman.com/view/41681143/2sB2qgdxhQ](https://documenter.getpostman.com/view/41681143/2sB2qgdxhQ)**
 
 ---
 
